@@ -13,7 +13,14 @@ class BaseAddController: UIViewController {
         view.backgroundColor = .systemGroupedBackground
         setupNavigationBar()
     }
+    
+    
     fileprivate func setupNavigationBar() {
+        let navigationBarAppearence = UINavigationBarAppearance()
+        navigationBarAppearence.backgroundColor = .systemGroupedBackground
+        navigationBarAppearence.shadowColor = .clear
+        navigationController?.navigationBar.standardAppearance = navigationBarAppearence
+        navigationController?.navigationBar.prefersLargeTitles = false
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(cancelTapped))
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneTapped))
         navigationItem.rightBarButtonItem?.isEnabled = false

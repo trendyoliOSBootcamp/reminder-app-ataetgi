@@ -22,6 +22,13 @@
 		5F7C8711264F84B600783AEA /* PickerViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8710264F84B600783AEA /* PickerViewPresenter.swift */; };
 		5F7C87142650515100783AEA /* HomeHeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87132650515100783AEA /* HomeHeaderCell.swift */; };
 		5F7C8716265075A200783AEA /* RoundedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8715265075A200783AEA /* RoundedView.swift */; };
+		5F7C871826511F7300783AEA /* ListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C871726511F7300783AEA /* ListController.swift */; };
+		5F7C871A2651259600783AEA /* UIViewController+NavApperance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87192651259500783AEA /* UIViewController+NavApperance.swift */; };
+		5F7C871D26513D2900783AEA /* ReminderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C871C26513D2800783AEA /* ReminderCell.swift */; };
+		5F7C871F265145A800783AEA /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C871E265145A800783AEA /* String+Extensions.swift */; };
+		5F7C872126514FA200783AEA /* CustomSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C872026514FA200783AEA /* CustomSwitch.swift */; };
+		5F7C87232651741500783AEA /* ResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87222651741500783AEA /* ResultsController.swift */; };
+		5F7C8725265184B800783AEA /* HomeController+Updating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8724265184B800783AEA /* HomeController+Updating.swift */; };
 		5FEEA841264D75790008C99C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA840264D75790008C99C /* AppDelegate.swift */; };
 		5FEEA843264D75790008C99C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA842264D75790008C99C /* SceneDelegate.swift */; };
 		5FEEA845264D75790008C99C /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA844264D75790008C99C /* HomeController.swift */; };
@@ -51,6 +58,13 @@
 		5F7C8710264F84B600783AEA /* PickerViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewPresenter.swift; sourceTree = "<group>"; };
 		5F7C87132650515100783AEA /* HomeHeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeHeaderCell.swift; sourceTree = "<group>"; };
 		5F7C8715265075A200783AEA /* RoundedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedView.swift; sourceTree = "<group>"; };
+		5F7C871726511F7300783AEA /* ListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListController.swift; sourceTree = "<group>"; };
+		5F7C87192651259500783AEA /* UIViewController+NavApperance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+NavApperance.swift"; sourceTree = "<group>"; };
+		5F7C871C26513D2800783AEA /* ReminderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderCell.swift; sourceTree = "<group>"; };
+		5F7C871E265145A800783AEA /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		5F7C872026514FA200783AEA /* CustomSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSwitch.swift; sourceTree = "<group>"; };
+		5F7C87222651741500783AEA /* ResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsController.swift; sourceTree = "<group>"; };
+		5F7C8724265184B800783AEA /* HomeController+Updating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeController+Updating.swift"; sourceTree = "<group>"; };
 		5FEEA83D264D75790008C99C /* ReminderClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReminderClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FEEA840264D75790008C99C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FEEA842264D75790008C99C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -81,9 +95,12 @@
 			isa = PBXGroup;
 			children = (
 				5FEEA844264D75790008C99C /* HomeController.swift */,
+				5F7C8724265184B800783AEA /* HomeController+Updating.swift */,
+				5F7C87222651741500783AEA /* ResultsController.swift */,
 				5F7C8707264F5CCD00783AEA /* AddReminderController.swift */,
 				5F7C86F4264E108500783AEA /* AddListController.swift */,
 				5F7C8709264F5D2600783AEA /* BaseAddController.swift */,
+				5F7C871726511F7300783AEA /* ListController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -94,6 +111,8 @@
 				5F7C86F6264E10C100783AEA /* UIView+Layout.swift */,
 				5F7C8701264E5EE900783AEA /* Notifications.swift */,
 				5F7C8703264E672E00783AEA /* UIImage+Extensions.swift */,
+				5F7C87192651259500783AEA /* UIViewController+NavApperance.swift */,
+				5F7C871E265145A800783AEA /* String+Extensions.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -109,12 +128,14 @@
 		5F7C86FA264E2C0700783AEA /* View */ = {
 			isa = PBXGroup;
 			children = (
+				5F7C871B26513D0A00783AEA /* List */,
 				5F7C870B264F610500783AEA /* AddReminder */,
 				5F7C8700264E5E2800783AEA /* Home */,
 				5F7C86FD264E420300783AEA /* AddList */,
 				5F7C8710264F84B600783AEA /* PickerViewPresenter.swift */,
 				5F7C8715265075A200783AEA /* RoundedView.swift */,
 				5F7C86F8264E2BFB00783AEA /* PaddedTextField.swift */,
+				5F7C872026514FA200783AEA /* CustomSwitch.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -143,6 +164,14 @@
 				5F7C870C264F611600783AEA /* TextViewCell.swift */,
 			);
 			path = AddReminder;
+			sourceTree = "<group>";
+		};
+		5F7C871B26513D0A00783AEA /* List */ = {
+			isa = PBXGroup;
+			children = (
+				5F7C871C26513D2800783AEA /* ReminderCell.swift */,
+			);
+			path = List;
 			sourceTree = "<group>";
 		};
 		5FEEA834264D75790008C99C = {
@@ -259,15 +288,21 @@
 				5F7C8716265075A200783AEA /* RoundedView.swift in Sources */,
 				5F7C86F5264E108500783AEA /* AddListController.swift in Sources */,
 				5F7C8708264F5CCD00783AEA /* AddReminderController.swift in Sources */,
+				5F7C871A2651259600783AEA /* UIViewController+NavApperance.swift in Sources */,
 				5FEEA845264D75790008C99C /* HomeController.swift in Sources */,
 				5FEEA85E264DCB0F0008C99C /* Reminder+CoreDataClass.swift in Sources */,
 				5FEEA84B264D75790008C99C /* ReminderClone.xcdatamodeld in Sources */,
 				5F7C86FF264E421400783AEA /* CustomCellConfigrations.swift in Sources */,
+				5F7C871D26513D2900783AEA /* ReminderCell.swift in Sources */,
 				5FEEA841264D75790008C99C /* AppDelegate.swift in Sources */,
+				5F7C871F265145A800783AEA /* String+Extensions.swift in Sources */,
 				5F7C8706264F2AF500783AEA /* HomeListCell.swift in Sources */,
 				5F7C86F7264E10C100783AEA /* UIView+Layout.swift in Sources */,
 				5F7C8711264F84B600783AEA /* PickerViewPresenter.swift in Sources */,
 				5F7C86FC264E3F6600783AEA /* NewListCell.swift in Sources */,
+				5F7C8725265184B800783AEA /* HomeController+Updating.swift in Sources */,
+				5F7C872126514FA200783AEA /* CustomSwitch.swift in Sources */,
+				5F7C87232651741500783AEA /* ResultsController.swift in Sources */,
 				5F7C86F9264E2BFB00783AEA /* PaddedTextField.swift in Sources */,
 				5FEEA843264D75790008C99C /* SceneDelegate.swift in Sources */,
 				5F239C08264DCFDA009E9F16 /* CoreDataManager.swift in Sources */,
@@ -276,6 +311,7 @@
 				5F7C8704264E672E00783AEA /* UIImage+Extensions.swift in Sources */,
 				5F7C870A264F5D2600783AEA /* BaseAddController.swift in Sources */,
 				5F7C870D264F611600783AEA /* TextViewCell.swift in Sources */,
+				5F7C871826511F7300783AEA /* ListController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

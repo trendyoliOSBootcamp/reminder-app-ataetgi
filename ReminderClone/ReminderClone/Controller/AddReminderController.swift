@@ -9,7 +9,7 @@ import UIKit
 import SwiftUI
 import CoreData
 
-class AddReminderController: BaseAddController{
+class AddReminderController: BaseAddController {
     
     private let flagSwitch: UISwitch = {
         let flag = UISwitch()
@@ -64,7 +64,7 @@ class AddReminderController: BaseAddController{
     
     var lists: [PickerItem]? {
         didSet{
-            selectedList = lists?.last
+            selectedList = lists?.first
         }
     }
     
@@ -85,6 +85,10 @@ class AddReminderController: BaseAddController{
         navigationItem.rightBarButtonItem?.title = "Add"
         view.addSubview(priorityPickerViewPresenter)
         view.addSubview(listPickerViewPresenter)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     fileprivate func setupTableView() {

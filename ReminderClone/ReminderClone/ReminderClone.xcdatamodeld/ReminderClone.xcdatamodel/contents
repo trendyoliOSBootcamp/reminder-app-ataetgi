@@ -9,6 +9,7 @@
     </entity>
     <entity name="Reminder" representedClassName="Reminder" syncable="YES">
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="done" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="flag" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="priority" attributeType="Integer 16" minValueString="0" maxValueString="3" defaultValueString="0" usesScalarValueType="YES"/>
@@ -17,6 +18,6 @@
     </entity>
     <elements>
         <element name="List" positionX="281.2550659179688" positionY="-94.37060546875" width="128" height="104"/>
-        <element name="Reminder" positionX="-21.39093017578125" positionY="-195.920654296875" width="128" height="119"/>
+        <element name="Reminder" positionX="-21.39093017578125" positionY="-195.920654296875" width="128" height="134"/>
     </elements>
 </model>

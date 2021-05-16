@@ -10,7 +10,7 @@ import CoreData
 import SwiftUI
 
 class HomeController: UIViewController {
-
+    
     enum Section: Int, CaseIterable, CustomStringConvertible {
         case header, list
         
@@ -31,6 +31,8 @@ class HomeController: UIViewController {
     }
     
     var collectionView: UICollectionView!
+    var searchController: UISearchController!
+    
     var dataSource: UICollectionViewDiffableDataSource<Section, AnyHashable>!
     var diffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
     var request: NSFetchRequest<List>!
@@ -43,17 +45,33 @@ class HomeController: UIViewController {
         super.viewDidLoad()
         navigationController?.isToolbarHidden = false
         setupToolbar()
-        
         configureCollectionView()
         configureDataSource()
         coreDataRequest()
+        
+        let resultsController = ResultsController()
+        searchController = UISearchController(searchResultsController: resultsController)
+        searchController.delegate = self
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.delegate = self
+        
+        navigationItem.searchController = searchController
+        
+        definesPresentationContext = true
+        
 //        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createList, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createReminder, object: nil)
 
     }
     
-    var addReminderButton: UIBarButtonItem!
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
     
+    var addReminderButton: UIBarButtonItem!
     
     fileprivate func setupToolbar() {
         let toolBar = navigationController?.toolbar
@@ -82,7 +100,7 @@ class HomeController: UIViewController {
         addReminderController.lists = dataSource.snapshot().itemIdentifiers(inSection: .list).map({ list in
             let list = list as! List
             return PickerItem(name: list.name, objectId: list.objectID, type: .list)
-        })
+        }).reversed()
         present(UINavigationController(rootViewController: addReminderController), animated: true, completion: nil)
     }
     
@@ -294,9 +312,14 @@ extension HomeController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(#function)
-        let detailViewController = UIViewController()
-        detailViewController.view.backgroundColor = .systemBackground
-        self.navigationController?.pushViewController(detailViewController, animated: true)
+        if indexPath.section == 1 {
+            if let list = dataSource.itemIdentifier(for: indexPath) as? List {
+                let listController = ListController(list: list)
+                navigationController?.pushViewController(listController, animated: true)
+            }
+        }
+        
+        collectionView.deselectItem(at: indexPath, animated: true)
     }
     
 
@@ -308,6 +331,15 @@ extension HomeController: UICollectionViewDelegate {
 extension HomeController: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         updateSnapshot()
+    }
+}
+
+extension HomeController: UISearchControllerDelegate, UISearchBarDelegate  {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+        updateSearchResults(for: searchController)
     }
 }
 

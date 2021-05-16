@@ -13,13 +13,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        UINavigationBar.appearance().prefersLargeTitles = false
+
         ColorValueTransformer.register()
-        
-        let navigationBarAppearence = UINavigationBarAppearance()
-        navigationBarAppearence.backgroundColor = .systemGroupedBackground
-        navigationBarAppearence.shadowColor = .clear
-        UINavigationBar.appearance().standardAppearance = navigationBarAppearence
+        UINavigationBar.appearance().prefersLargeTitles = true
+
         print(NSHomeDirectory())
         return true
     }

@@ -16,13 +16,13 @@ extension Reminder {
         return NSFetchRequest<Reminder>(entityName: "Reminder")
     }
 
+    @NSManaged public var done: Bool
     @NSManaged public var date: Date
     @NSManaged public var flag: Bool
     @NSManaged public var note: String
     @NSManaged public var priority: Int16
     @NSManaged public var title: String
     @NSManaged public var list: List
-
 }
 
 extension Reminder : Identifiable {

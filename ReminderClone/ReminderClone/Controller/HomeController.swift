@@ -88,17 +88,17 @@ class HomeController: UIViewController {
     
     @objc func addReminder() {
         print(#function)
-        let addReminderController = AddReminderController()
-        addReminderController.lists = dataSource.snapshot().itemIdentifiers(inSection: .list).map({ list in
-            let list = list as! List
-            return PickerItem(name: list.name, objectId: list.objectID, type: .list)
-        })
+        let addReminderController = AddEditReminderController()
+//        addReminderController.lists = dataSource.snapshot().itemIdentifiers(inSection: .list).map({ list in
+//            let list = list as! List
+//            return PickerItem(name: list.name, objectId: list.objectID, type: .list)
+//        })
         present(UINavigationController(rootViewController: addReminderController), animated: true, completion: nil)
     }
     
     @objc func addList() {
         print(#function)
-        let addListController = UINavigationController(rootViewController: AddListController())
+        let addListController = UINavigationController(rootViewController: AddEditListController())
         present(addListController, animated: true, completion: nil)
     }
 
@@ -174,7 +174,7 @@ class HomeController: UIViewController {
                 completion(false)
                 return
             }
-            let addListController = AddListController()
+            let addListController = AddEditListController()
             addListController.list = item
             self.present(UINavigationController(rootViewController: addListController), animated: true, completion: nil)
             

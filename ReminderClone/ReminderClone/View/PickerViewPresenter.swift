@@ -93,5 +93,12 @@ struct PickerItem {
         default: return 0
         }
     }
+    static func getName(id: Int) -> String {
+        switch id {
+        case 1: return "Low"
+        case 2: return "Medium"
+        case 3: return "High"
+        default: return "None"
+        }
+    }
 }
-

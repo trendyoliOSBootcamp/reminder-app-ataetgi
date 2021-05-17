@@ -88,7 +88,7 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        guard textView.hasText else { return }
+        guard textView.text.trimmingCharacters(in: .whitespacesAndNewlines) != "" else { return }
         CoreDataManager.shared.saveContext { error in
             guard error == nil else {return}
             NotificationCenter.default.post(name: .updateReminder, object: nil)

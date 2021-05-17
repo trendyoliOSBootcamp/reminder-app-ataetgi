@@ -8,14 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		5F239C08264DCFDA009E9F16 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F239C07264DCFDA009E9F16 /* CoreDataManager.swift */; };
-		5F7C86F5264E108500783AEA /* AddListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C86F4264E108500783AEA /* AddListController.swift */; };
+		5F7C86F5264E108500783AEA /* AddEditListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C86F4264E108500783AEA /* AddEditListController.swift */; };
 		5F7C86F7264E10C100783AEA /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C86F6264E10C100783AEA /* UIView+Layout.swift */; };
 		5F7C86F9264E2BFB00783AEA /* PaddedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C86F8264E2BFB00783AEA /* PaddedTextField.swift */; };
 		5F7C86FC264E3F6600783AEA /* NewListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C86FB264E3F6600783AEA /* NewListCell.swift */; };
 		5F7C86FF264E421400783AEA /* CustomCellConfigrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C86FE264E421400783AEA /* CustomCellConfigrations.swift */; };
 		5F7C8702264E5EE900783AEA /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8701264E5EE900783AEA /* Notifications.swift */; };
 		5F7C8704264E672E00783AEA /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8703264E672E00783AEA /* UIImage+Extensions.swift */; };
-		5F7C8708264F5CCD00783AEA /* AddReminderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8707264F5CCD00783AEA /* AddReminderController.swift */; };
+		5F7C8708264F5CCD00783AEA /* AddEditReminderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8707264F5CCD00783AEA /* AddEditReminderController.swift */; };
 		5F7C870A264F5D2600783AEA /* BaseAddController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8709264F5D2600783AEA /* BaseAddController.swift */; };
 		5F7C870D264F611600783AEA /* TextViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C870C264F611600783AEA /* TextViewCell.swift */; };
 		5F7C8711264F84B600783AEA /* PickerViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8710264F84B600783AEA /* PickerViewPresenter.swift */; };
@@ -43,14 +43,14 @@
 
 /* Begin PBXFileReference section */
 		5F239C07264DCFDA009E9F16 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
-		5F7C86F4264E108500783AEA /* AddListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListController.swift; sourceTree = "<group>"; };
+		5F7C86F4264E108500783AEA /* AddEditListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditListController.swift; sourceTree = "<group>"; };
 		5F7C86F6264E10C100783AEA /* UIView+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		5F7C86F8264E2BFB00783AEA /* PaddedTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedTextField.swift; sourceTree = "<group>"; };
 		5F7C86FB264E3F6600783AEA /* NewListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewListCell.swift; sourceTree = "<group>"; };
 		5F7C86FE264E421400783AEA /* CustomCellConfigrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCellConfigrations.swift; sourceTree = "<group>"; };
 		5F7C8701264E5EE900783AEA /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		5F7C8703264E672E00783AEA /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
-		5F7C8707264F5CCD00783AEA /* AddReminderController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReminderController.swift; sourceTree = "<group>"; };
+		5F7C8707264F5CCD00783AEA /* AddEditReminderController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddEditReminderController.swift; sourceTree = "<group>"; };
 		5F7C8709264F5D2600783AEA /* BaseAddController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAddController.swift; sourceTree = "<group>"; };
 		5F7C870C264F611600783AEA /* TextViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewCell.swift; sourceTree = "<group>"; };
 		5F7C8710264F84B600783AEA /* PickerViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewPresenter.swift; sourceTree = "<group>"; };
@@ -95,8 +95,8 @@
 				5FEEA844264D75790008C99C /* HomeController.swift */,
 				5F7C8724265184B800783AEA /* HomeController+Updating.swift */,
 				5F7C87222651741500783AEA /* ResultsController.swift */,
-				5F7C8707264F5CCD00783AEA /* AddReminderController.swift */,
-				5F7C86F4264E108500783AEA /* AddListController.swift */,
+				5F7C8707264F5CCD00783AEA /* AddEditReminderController.swift */,
+				5F7C86F4264E108500783AEA /* AddEditListController.swift */,
 				5F7C8709264F5D2600783AEA /* BaseAddController.swift */,
 				5F7C871726511F7300783AEA /* ListController.swift */,
 			);
@@ -283,8 +283,8 @@
 				5F7C87142650515100783AEA /* HomeHeaderCell.swift in Sources */,
 				5FEEA860264DCB0F0008C99C /* List+CoreDataClass.swift in Sources */,
 				5F7C8716265075A200783AEA /* RoundedView.swift in Sources */,
-				5F7C86F5264E108500783AEA /* AddListController.swift in Sources */,
-				5F7C8708264F5CCD00783AEA /* AddReminderController.swift in Sources */,
+				5F7C86F5264E108500783AEA /* AddEditListController.swift in Sources */,
+				5F7C8708264F5CCD00783AEA /* AddEditReminderController.swift in Sources */,
 				5F7C871A2651259600783AEA /* UIViewController+Extensions.swift in Sources */,
 				5FEEA845264D75790008C99C /* HomeController.swift in Sources */,
 				5FEEA85E264DCB0F0008C99C /* Reminder+CoreDataClass.swift in Sources */,

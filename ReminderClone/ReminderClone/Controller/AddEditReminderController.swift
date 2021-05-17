@@ -9,14 +9,27 @@ import UIKit
 import SwiftUI
 import CoreData
 
-class AddReminderController: BaseAddController {
+protocol AddEditReminderProtocol: AnyObject {
+    func didUpdated()
+}
+
+class AddEditReminderController: BaseAddController {
+    
+    var reminder: Reminder? {
+        didSet{
+            guard let reminder = reminder else { return }
+            flagSwitch.isOn = reminder.flag
+            selectedPriorty = PickerItem(name: "\(PickerItem.getName(id: Int(reminder.priority)))", objectId: nil, type: .priorty)
+        }
+    }
+    
+    weak var delegate: AddEditReminderProtocol?
     
     private let flagSwitch: UISwitch = {
         let flag = UISwitch()
         flag.isOn = false
         return flag
     }()
-    
     
     private lazy var priorityPickerViewPresenter: PickerViewPresenter = {
         let pickerViewPresenter = PickerViewPresenter(items: priorities)
@@ -62,9 +75,15 @@ class AddReminderController: BaseAddController {
         }
     }
     
-    var lists: [PickerItem]? {
+    var lists: [PickerItem] =  CoreDataManager.shared.fetchLists().map({ list in
+        return PickerItem(name: list.name, objectId: list.objectID, type: .list)
+    }) {
         didSet{
-            selectedList = lists?.first
+            if let reminder = reminder{
+                selectedList = PickerItem(name: reminder.list.name, objectId: reminder.list.objectID, type: .list)
+            } else {
+                selectedList = lists.first
+            }
         }
     }
     
@@ -80,6 +99,10 @@ class AddReminderController: BaseAddController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        lists = CoreDataManager.shared.fetchLists().map { list in
+            return PickerItem(name: list.name, objectId: list.objectID, type: .list)
+        }
+        
         title = "New Reminder"
         setupTableView()
         navigationItem.rightBarButtonItem?.title = "Add"
@@ -104,13 +127,26 @@ class AddReminderController: BaseAddController {
         guard let objectId = selectedList?.objectId else { return }
         guard let list = CoreDataManager.shared.persistentContainer.viewContext.object(with:  objectId) as? List else { return }
         
-        CoreDataManager.shared.createReminder(date: Date(), flag: flagSwitch.isOn, note: notesTextView.text ?? "", priority: Int16(selectedPriorty.priortyId), title: titleTextView.text ?? "", list: list)
+        if let reminder = reminder {
+            reminder.flag = flagSwitch.isOn
+            reminder.title = titleTextView.text
+            reminder.note = notesTextView.text
+            reminder.priority = Int16(selectedPriorty.priortyId)
+            CoreDataManager.shared.saveContext {[weak self] error in
+                guard let self = self else { return }
+                guard error == nil else { return }
+                NotificationCenter.default.post(name: .updateReminder, object: nil)
+                self.delegate?.didUpdated()
+            }
+        } else {
+            CoreDataManager.shared.createReminder(date: Date(), flag: flagSwitch.isOn, note: notesTextView.text ?? "", priority: Int16(selectedPriorty.priortyId), title: titleTextView.text, list: list)
+        }
     }
     
     let flagIdentifier = "flagIdentfier"
 }
 
-extension AddReminderController: UITableViewDataSource {
+extension AddEditReminderController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         4
@@ -127,14 +163,17 @@ extension AddReminderController: UITableViewDataSource {
         
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "textFieldReuse", for: indexPath) as! TextViewCell
-            cell.placeholderLabel.text = placeholders[indexPath.row]
             if indexPath.row == 0 {
                 if titleTextView == nil {
                     cell.textView.becomeFirstResponder()
                 }
                 titleTextView = cell.textView
+                cell.textView.text = reminder?.title
+                cell.placeholderLabel.text = reminder?.title == nil ? placeholders[indexPath.row] : ""
             } else {
                 notesTextView = cell.textView
+                cell.textView.text = reminder?.note
+                cell.placeholderLabel.text = reminder?.note == nil ? placeholders[indexPath.row] : ""
             }
             cell.delegate = self
             cell.selectionStyle = .none
@@ -173,7 +212,7 @@ extension AddReminderController: UITableViewDataSource {
     
 }
 
-extension AddReminderController: UITableViewDelegate, TextViewCellProtocol {
+extension AddEditReminderController: UITableViewDelegate, TextViewCellProtocol {
     
     func titleHasChange(isHidden: Bool) {
         navigationItem.rightBarButtonItem?.isEnabled = isHidden
@@ -214,7 +253,7 @@ struct AddReminderPreview: PreviewProvider {
     
     struct ContainerView: UIViewControllerRepresentable {
         func makeUIViewController(context: Context) -> some UIViewController {
-            AddReminderController()
+            AddEditReminderController()
         }
         func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
             

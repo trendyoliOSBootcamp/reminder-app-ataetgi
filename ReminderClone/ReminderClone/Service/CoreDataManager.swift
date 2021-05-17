@@ -47,6 +47,24 @@ struct CoreDataManager {
         }
     }
     
+    func fetchLists() -> [List] {
+        
+        // attempt my core data fetch somehow...
+        let context  = persistentContainer.viewContext
+        
+        let fetchRequest = List.createFetchRequest()
+        
+        do {
+            let lists = try context.fetch(fetchRequest)
+            return lists
+
+        } catch let fetchErr {
+            print("Failed to fetch companies", fetchErr)
+            return []
+        }
+        
+    }
+    
     typealias SaveResult = (Error?) -> ()
     func saveContext(completion: SaveResult?) {
         if persistentContainer.viewContext.hasChanges {

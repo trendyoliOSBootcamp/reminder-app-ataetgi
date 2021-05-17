@@ -7,7 +7,7 @@
 import SwiftUI
 import UIKit
 
-class AddListController: BaseAddController {
+class AddEditListController: BaseAddController {
     
     lazy var imageView: UIImageView = {
         let iv = UIImageView(image: UIImage(selectedIcon, at: 50, centeredIn: .init(width: 100, height: 100)))
@@ -180,7 +180,7 @@ class AddListController: BaseAddController {
     }
 }
 
-extension AddListController: UICollectionViewDelegate {
+extension AddEditListController: UICollectionViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         view.endEditing(true)
     }
@@ -203,7 +203,7 @@ struct preview: PreviewProvider {
     struct ContainerView: UIViewControllerRepresentable {
         func makeUIViewController(context: Context) -> some UIViewController {
 //            AddListController()
-            UINavigationController(rootViewController: AddListController())
+            UINavigationController(rootViewController: AddEditListController())
         }
         func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
             

@@ -8,7 +8,12 @@
 import UIKit
 import SwiftUI
 
-class ListController: UITableViewController {
+class ListController: UITableViewController, AddEditReminderProtocol {
+    
+    func didUpdated() {
+        tableView.reloadData()
+    }
+    
 
     init(list: List?) {
         self.list = list
@@ -35,6 +40,7 @@ class ListController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         tableView.backgroundView = UIView()
         tableView.allowsSelection = false
         tableView.backgroundColor = .systemGroupedBackground
@@ -54,26 +60,38 @@ class ListController: UITableViewController {
         navigationController?.navigationBar.standardAppearance = apperance
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if tempReminder != nil && tempReminder.title.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            list.removeFromReminders(tempReminder)
+            let indexPath = IndexPath(item: ((list?.reminders?.count ?? 0)), section: 0)
+            CoreDataManager.shared.persistentContainer.viewContext.delete(tempReminder)
+            tempReminder = nil
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
+    }
+    
     var tempReminder: Reminder!
     
     @objc private func addNewReminder() {
         print(#function)
         view.endEditing(true)
-        if tempReminder != nil, tempReminder.title.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-            list?.removeFromReminders(tempReminder)
+        if tempReminder != nil && tempReminder.title.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            list.removeFromReminders(tempReminder)
             let indexPath = IndexPath(item: ((list?.reminders?.count ?? 0)), section: 0)
+            CoreDataManager.shared.persistentContainer.viewContext.delete(tempReminder)
             tempReminder = nil
             tableView.deleteRows(at: [indexPath], with: .automatic)
         } else if tempReminder == nil {
             let indexPath = IndexPath(item: ((list?.reminders?.count ?? 0)), section: 0)
-            tempReminder = Reminder(context: CoreDataManager.shared.persistentContainer.viewContext)
-            tempReminder.date = Date()
-            tempReminder.list = list
-            list?.addToReminders(tempReminder)
+            let newReminder = Reminder(context: CoreDataManager.shared.persistentContainer.viewContext)
+            newReminder.date = Date()
+            newReminder.list = list
+            tempReminder = newReminder
+            list?.addToReminders(newReminder)
             tableView.insertRows(at: [indexPath], with: .automatic)
             noReminderLabel.text = nil
             if let cell = tableView.cellForRow(at: indexPath) as? ReminderCell {
-                cell.reminder = list.reminders?.lastObject as? Reminder
                 cell.textView.becomeFirstResponder()
             }
         } else {
@@ -158,7 +176,9 @@ extension ListController {
                 completion(false)
                 return
             }
-            let reminderController = AddReminderController()
+            let reminderController = AddEditReminderController()
+            reminderController.delegate = self
+            reminderController.reminder = reminder
             self.present(UINavigationController(rootViewController: reminderController), animated: true, completion: nil)
             completion(true)
         }

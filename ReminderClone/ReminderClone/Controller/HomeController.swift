@@ -61,8 +61,8 @@ class HomeController: UIViewController {
         
         definesPresentationContext = true
         
-        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createList, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createReminder, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .updateList, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .updateReminder, object: nil)
 
     }
     
@@ -71,7 +71,7 @@ class HomeController: UIViewController {
         navigationController?.navigationBar.prefersLargeTitles = false
     }
     
-    var addReminderButton: UIBarButtonItem!
+    lazy var addReminderButton = UIBarButtonItem(customView: createReminderButton(selector: #selector(addReminder)))
     
     fileprivate func setupToolbar() {
         let toolBar = navigationController?.toolbar
@@ -79,14 +79,6 @@ class HomeController: UIViewController {
         toolbarApperance.backgroundColor = .systemGroupedBackground
         toolbarApperance.shadowColor = .clear
         toolBar?.standardAppearance = toolbarApperance
-        let button = UIButton(type: .system)
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .bold)
-        button.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: config), for: .normal)
-        button.titleLabel?.font = UIFontMetrics.default.scaledFont(for: .boldSystemFont(ofSize: 18))
-        button.setTitle("  New Reminder", for: .normal)
-        button.sizeToFit()
-        button.addTarget(self, action: #selector(addReminder), for: .touchUpInside)
-        addReminderButton = UIBarButtonItem(customView: button)
         toolbarItems = [
             addReminderButton,
             .flexibleSpace(),
@@ -287,7 +279,6 @@ class HomeController: UIViewController {
 }
 
 extension HomeController: UICollectionViewDelegate {
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(#function)
         if indexPath.section == 1 {
@@ -296,7 +287,6 @@ extension HomeController: UICollectionViewDelegate {
                 navigationController?.pushViewController(listController, animated: true)
             }
         }
-        
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

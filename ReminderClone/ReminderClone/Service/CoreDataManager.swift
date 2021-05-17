@@ -21,21 +21,19 @@ struct CoreDataManager {
         return container
     }()
     
-    @discardableResult
-    func createList(color: UIColor, icon: String, name: String, date: Date) -> (type: List?, error: Error?) {
+    func createList(color: UIColor, icon: String, name: String, date: Date) {
         let context = persistentContainer.viewContext
         let list = List(context: context)
         list.color = color
         list.icon = icon
         list.name = name
         list.date = date
-        return saveContext(list) { list in
-            NotificationCenter.default.post(name: .createList, object: nil)
+        saveContext() { _ in
+            NotificationCenter.default.post(name: .updateList, object: nil)
         }
     }
     
-    @discardableResult
-    func createReminder(date: Date, flag: Bool, note: String, priority: Int16, title: String, list: List) -> (type: Reminder?, error: Error?)  {
+    func createReminder(date: Date, flag: Bool, note: String, priority: Int16, title: String, list: List) {
         let context = persistentContainer.viewContext
         let reminder = Reminder(context: context)
         reminder.date = date
@@ -44,23 +42,21 @@ struct CoreDataManager {
         reminder.priority = priority
         reminder.title = title
         reminder.list = list
-        return saveContext(reminder) { reminder in
-            NotificationCenter.default.post(name: .createReminder, object: nil)
+        saveContext() { _ in
+            NotificationCenter.default.post(name: .updateReminder, object: nil)
         }
     }
     
-    @discardableResult
-    func saveContext<T>(_ object: T? = nil, completion: @escaping (T?) -> ()) -> (type: T?, error: Error?) {
+    typealias SaveResult = (Error?) -> ()
+    func saveContext(completion: SaveResult?) {
         if persistentContainer.viewContext.hasChanges {
             do {
                 try persistentContainer.viewContext.save()
-                completion(object)
-                return (object, nil)
+                completion?(nil)
             } catch {
                 print("An error occured while saving: \(error)")
-                return (nil, error)
+                completion?(error)
             }
         }
-        return (nil, nil)
     }
 }

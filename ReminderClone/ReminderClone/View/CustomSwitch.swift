@@ -7,6 +7,11 @@
 
 import UIKit
 
+protocol SwitchDelegate: AnyObject {
+    func didEndTap(_ customSwitch: CustomSwitch)
+}
+
+
 class CustomSwitch: UIButton {
     var status: Bool = false {
         didSet {
@@ -15,6 +20,8 @@ class CustomSwitch: UIButton {
     }
     var onImage = UIImage(systemName: "largecircle.fill.circle")
     var offImage = UIImage(systemName: "circle")
+    
+    weak var delegate: SwitchDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,6 +39,7 @@ class CustomSwitch: UIButton {
     }
     func toggle() {
         self.status ? self.setStatus(false) : self.setStatus(true)
+        delegate?.didEndTap(self)
     }
     
     func setStatus(_ status: Bool) {

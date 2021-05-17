@@ -56,7 +56,8 @@ class AddListController: BaseAddController {
     }
 
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
-    private var collectionView: UICollectionView!
+    private var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+    var collectionView: UICollectionView!
     
     var selectedColor: UIColor = .systemBlue {
         didSet{
@@ -76,12 +77,12 @@ class AddListController: BaseAddController {
         title = list?.name == nil ? "New List" : "Name & Appearance"
         setupViews()
         configureDataSource()
-        collectionView.selectItem(at: [0,4], animated: false, scrollPosition: .bottom)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.rightBarButtonItem?.isEnabled = list != nil
+        selectColorFromCollectionView()
     }
     
     @objc override func doneTapped() {
@@ -89,13 +90,20 @@ class AddListController: BaseAddController {
             list.name = textField.text ?? ""
             list.color = selectedColor
             list.icon = selectedIcon
-            CoreDataManager.shared.saveContext(list) { _ in
-                NotificationCenter.default.post(name: .createList, object: nil)
+            CoreDataManager.shared.saveContext() { _ in
+                NotificationCenter.default.post(name: .updateList, object: nil)
             }
         } else {
             CoreDataManager.shared.createList(color: selectedColor, icon: selectedIcon, name: textField.text ?? "", date: Date())
         }
         super.doneTapped()
+    }
+    
+    fileprivate func selectColorFromCollectionView() {
+        if let selectedItem = snapshot.itemIdentifiers(inSection: .color).first(where: { $0.color == selectedColor }) {
+            let index: Int = Item.colors.distance(from: Item.colors.startIndex, to: Item.colors.firstIndex(of: selectedItem) ?? 4)
+            collectionView.selectItem(at: [0, index], animated: true, scrollPosition: .bottom)
+        }
     }
     
     func createLayout() -> UICollectionViewLayout {
@@ -148,7 +156,7 @@ class AddListController: BaseAddController {
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
         }
 
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+       
         snapshot.appendSections([.color, .icon])
         snapshot.appendItems(Item.colors, toSection: .color)
         snapshot.appendItems(Item.all, toSection: .icon)

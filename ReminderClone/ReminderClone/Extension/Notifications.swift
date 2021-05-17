@@ -8,6 +8,6 @@
 import Foundation
 
 extension Notification.Name {
-    static let createList = Notification.Name("createList")
-    static let createReminder = Notification.Name("createReminder")
+    static let updateList = Notification.Name("updateList")
+    static let updateReminder = Notification.Name("updateReminder")
 }

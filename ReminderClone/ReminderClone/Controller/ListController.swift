@@ -19,6 +19,8 @@ class ListController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    lazy var addReminderButton = createReminderButton(selector: #selector(addNewReminder))
+    
     lazy var noReminderLabel: UILabel = {
         let label = UILabel()
         label.textColor = .gray
@@ -28,10 +30,8 @@ class ListController: UITableViewController {
         return label
     }()
     
-
-    
     let reuseIdentifier = "reuseIdentifier"
-    var list: List?
+    var list: List!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,27 +41,51 @@ class ListController: UITableViewController {
         tableView.separatorStyle = .none
         tableView.backgroundView = noReminderLabel
         tableView.register(ReminderCell.self, forCellReuseIdentifier: reuseIdentifier)
+        toolbarItems = [UIBarButtonItem(customView: addReminderButton), .flexibleSpace()]
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = true
         title = list?.name ?? "All"
+        addReminderButton.tintColor = list?.color ?? .systemBlue
         let apperance = UINavigationBarAppearance()
         apperance.largeTitleTextAttributes = [.foregroundColor: list?.color ?? .darkGray]
         navigationController?.navigationBar.standardAppearance = apperance
     }
     
+    var tempReminder: Reminder!
+    
     @objc private func addNewReminder() {
         print(#function)
         view.endEditing(true)
+        if tempReminder != nil, tempReminder.title.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+            list?.removeFromReminders(tempReminder)
+            let indexPath = IndexPath(item: ((list?.reminders?.count ?? 0)), section: 0)
+            tempReminder = nil
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        } else if tempReminder == nil {
+            let indexPath = IndexPath(item: ((list?.reminders?.count ?? 0)), section: 0)
+            tempReminder = Reminder(context: CoreDataManager.shared.persistentContainer.viewContext)
+            tempReminder.date = Date()
+            tempReminder.list = list
+            list?.addToReminders(tempReminder)
+            tableView.insertRows(at: [indexPath], with: .automatic)
+            noReminderLabel.text = nil
+            if let cell = tableView.cellForRow(at: indexPath) as? ReminderCell {
+                cell.reminder = list.reminders?.lastObject as? Reminder
+                cell.textView.becomeFirstResponder()
+            }
+        } else {
+            tempReminder = nil
+        }
     }
 }
 
 
+// MARK: - TableView Methods
 
 extension ListController {
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return list?.reminders?.count ?? 10
     }
@@ -69,11 +93,7 @@ extension ListController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! ReminderCell
         let reminder = list?.reminders?[indexPath.row] as? Reminder
-        cell.priortyLabel.text = String(repeating: "!", count: Int(reminder?.priority ?? 0))
-        cell.isDoneSwitch.tintColor = list?.color
-        cell.isDoneSwitch.setStatus(reminder?.done ?? false)
-        cell.textView.text = reminder?.title 
-        cell.flagImageView.alpha = (reminder?.flag ?? true) ? 1 : 0
+        cell.reminder = reminder
         cell.textChanged { [weak tableView] (newText: String) in
             if let reminder = reminder {
                 reminder.title = newText
@@ -83,7 +103,6 @@ extension ListController {
                 tableView?.endUpdates()
             }
         }
-        
         return cell
     }
     
@@ -108,10 +127,64 @@ extension ListController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let reminder = list?.reminders?[indexPath.row] as? Reminder {
-            return reminder.title.heightWithConstrainedWidth(width: tableView.frame.width - 120, font: UIFont.systemFont(ofSize: 14)) + 22
+            return reminder.title.heightWithConstrainedWidth(width: tableView.frame.width - 120, font: UIFont.systemFont(ofSize: 16)) + 26
         }
         return 46
     }
+    
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") {
+            (_, _, completion) in
+            guard let reminder = (tableView.cellForRow(at: indexPath) as? ReminderCell)?.reminder else {
+                completion(false)
+                return
+            }
+            CoreDataManager.shared.persistentContainer.viewContext.delete(reminder)
+            CoreDataManager.shared.saveContext { error in
+                guard error == nil else {
+                    completion(false)
+                    return
+                }
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+                NotificationCenter.default.post(name: .updateReminder, object: nil)
+                completion(true)
+            }
+        }
+        
+        let detailsAction = UIContextualAction(style: .normal, title: "Details") {
+            [weak self] (_, _, completion) in
+            guard let self = self, let reminder = (tableView.cellForRow(at: indexPath) as? ReminderCell)?.reminder  else {
+                completion(false)
+                return
+            }
+            let reminderController = AddReminderController()
+            self.present(UINavigationController(rootViewController: reminderController), animated: true, completion: nil)
+            completion(true)
+        }
+        
+        let flagAction = UIContextualAction(style: .normal, title: "Flag") { _, _, completion in
+            guard let reminder = (tableView.cellForRow(at: indexPath) as? ReminderCell)?.reminder else {
+                completion(false)
+                return
+            }
+            reminder.flag.toggle()
+            CoreDataManager.shared.saveContext { error in
+                guard error == nil else {
+                    completion(false)
+                    return
+                }
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+                completion(true)
+            }
+        }
+        
+        deleteAction.backgroundColor = .systemRed
+        detailsAction.backgroundColor = .systemGray
+        flagAction.backgroundColor = .systemOrange
+        return UISwipeActionsConfiguration(actions: [deleteAction, flagAction, detailsAction])
+    }
+    
 }
 
 struct ListPreview: PreviewProvider {

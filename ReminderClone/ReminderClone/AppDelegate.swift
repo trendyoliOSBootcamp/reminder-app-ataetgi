@@ -11,13 +11,20 @@ import CoreData
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    private var isLaunched: Bool!
+    private let isLaunchedKey = "isLaunched"
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
-
+        // Override point for customization after application launch
         ColorValueTransformer.register()
         UINavigationBar.appearance().prefersLargeTitles = true
-
         print(NSHomeDirectory())
+        
+        isLaunched = UserDefaults.standard.bool(forKey: isLaunchedKey)
+        if !isLaunched {
+            CoreDataManager.shared.createList(color: .systemBlue, icon: "list.bullet", name: "Reminders", date: Date())
+            UserDefaults.standard.setValue(true, forKey: isLaunchedKey)
+        }
         return true
     }
 

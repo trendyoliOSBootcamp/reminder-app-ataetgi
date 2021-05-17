@@ -61,8 +61,8 @@ class HomeController: UIViewController {
         
         definesPresentationContext = true
         
-//        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createList, object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createReminder, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createList, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .createReminder, object: nil)
 
     }
     
@@ -100,7 +100,7 @@ class HomeController: UIViewController {
         addReminderController.lists = dataSource.snapshot().itemIdentifiers(inSection: .list).map({ list in
             let list = list as! List
             return PickerItem(name: list.name, objectId: list.objectID, type: .list)
-        }).reversed()
+        })
         present(UINavigationController(rootViewController: addReminderController), animated: true, completion: nil)
     }
     
@@ -164,40 +164,42 @@ class HomeController: UIViewController {
                 completion(false)
                 return
             }
-            
             CoreDataManager.shared.persistentContainer.viewContext.delete(item)
             if CoreDataManager.shared.persistentContainer.viewContext.hasChanges {
                 do {
                     try CoreDataManager.shared.persistentContainer.viewContext.save()
-                    self.updateSnapshot(animated: false)
+                    self.updateSnapshot()
+                    completion(true)
                 } catch {
                     print("An error occured while saving: \(error)")
+                    completion(false)
                 }
             }
+        }
+        
+        let infoAction = UIContextualAction(style: .normal, title: nil) {[weak self] _, _, completion in
+            guard let self = self else {
+                completion(false)
+                return
+            }
+            let addListController = AddListController()
+            addListController.list = item
+            self.present(UINavigationController(rootViewController: addListController), animated: true, completion: nil)
             
             completion(true)
         }
+        
         deleteAction.image = UIImage(systemName: "trash.fill")
-        deleteAction.backgroundColor = .red
-        return UISwipeActionsConfiguration(actions: [deleteAction])
+        deleteAction.backgroundColor = .systemRed
+        
+        infoAction.image = UIImage(systemName: "info.circle.fill")
+        infoAction.backgroundColor = .systemGray
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction, infoAction])
     }
     
     func createGridCellRegistration() -> UICollectionView.CellRegistration<HomeHeaderCell, HeaderItem> {
         return UICollectionView.CellRegistration<HomeHeaderCell, HeaderItem> { (cell, indexPath, header) in
-//            var content = UIListContentConfiguration.cell()
-//            content.image = UIImage(systemName: header.icon)
-//            content.text = "\(header.count)"
-//            content.secondaryText = "\(header.title)"
-//            content.imageProperties.tintColor = .label
-////            content.textProperties.font = .boldSystemFont(ofSize: 18)
-//            content.textProperties.alignment = .natural
-//            content.directionalLayoutMargins = .zero
-////            content.imageToTextPadding = 100
-//            content.prefersSideBySideTextAndSecondaryText = true
-//            content.textToSecondaryTextVerticalPadding = 10
-//            content.imageProperties.maximumSize = .init(width: 20, height: 20)
-//            cell.contentConfiguration = content
-
             cell.countLabel.text = "\(header.count)"
             cell.titleLabel.text = "\(header.title)"
             cell.iconView.image = UIImage(systemName: header.icon)
@@ -208,39 +210,17 @@ class HomeController: UIViewController {
         }
     }
     
-//    func createGridCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewCell, HeaderItem> {
-//        return UICollectionView.CellRegistration<UICollectionViewCell, HeaderItem> { (cell, indexPath, header) in
-////            var content = UIListContentConfiguration.cell()
-////            var content = UIListContentConfiguration.subtitleCell()
-////            content.image = UIImage(systemName: header.icon)
-////            content.text = "\(header.count)"
-////            content.secondaryText = "\(header.title)"
-////            content.imageProperties.tintColor = .label
-//////            content.textProperties.font = .boldSystemFont(ofSize: 18)
-////            content.textProperties.alignment = .natural
-////            content.directionalLayoutMargins = .zero
-//////            content.imageToTextPadding = 100
-////            content.prefersSideBySideTextAndSecondaryText = true
-////            content.textToSecondaryTextVerticalPadding = 10
-////            content.imageProperties.maximumSize = .init(width: 20, height: 20)
-////            cell.contentConfiguration = content
-//            var background = UIBackgroundConfiguration.listGroupedCell()
-//            background.cornerRadius = 8
-//            cell.backgroundConfiguration = background
-//        }
-//    }
-    
     func createListCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, List> {
         return UICollectionView.CellRegistration<UICollectionViewListCell, List> { [weak self] (cell, indexPath, item) in
             guard let self = self else { return }
             var content = UIListContentConfiguration.valueCell()
             if let imageData = UIImage(item.icon, at: (16 * 3 / 2), centeredIn: .init(width: 16 * 3, height: 16 * 3))?.pngData() {
                 let newImage = UIImage(data: imageData, scale: 3)
-                content.image = newImage?.withRoundedCorners(radius: 8, color: item.color)
+                content.image = newImage?.withRoundedCorners(radius: 16, color: item.color)
             }
             content.text = item.name
             content.imageProperties.tintColor = item.color
-            content.secondaryText = "\(item.reminders?.count ?? 0)"
+            content.secondaryText = "\(item.reminders!.count.description)"
             cell.contentConfiguration = content
             cell.backgroundColor = item.color
             cell.accessories = self.accessoriesForListCellItem(item)
@@ -265,8 +245,7 @@ class HomeController: UIViewController {
     
     fileprivate func coreDataRequest() {
         request = List.createFetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
-        request.sortDescriptors = [sortDescriptor]
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
 
         fetchedListResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
         fetchedListResultsController.delegate = self
@@ -279,7 +258,7 @@ class HomeController: UIViewController {
         do {
             try fetchedListResultsController.performFetch()
             try fetchedReminderResultsController.performFetch()
-            updateSnapshot(animated: false)
+            updateSnapshot(animated: true)
         } catch {
             print(error)
         }
@@ -296,14 +275,13 @@ class HomeController: UIViewController {
         ]
 
         addReminderButton.isEnabled = !(fetchedListResultsController.fetchedObjects?.isEmpty ?? true)
+        
         let sections = Section.allCases
         diffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
         diffableDataSourceSnapshot.appendSections(sections)
         
         diffableDataSourceSnapshot.appendItems(headers, toSection: .header)
         diffableDataSourceSnapshot.appendItems(fetchedListResultsController.fetchedObjects ?? [], toSection: .list)
-//        diffableDataSourceSnapshot.appendItems(fetchedResultsController.fetchedObjects ?? [], toSection: .list)
-//        dataSource?.apply(diffableDataSourceSnapshot, animatingDifferences: animated)
         dataSource.apply(diffableDataSourceSnapshot, animatingDifferences: animated)
     }
 }
@@ -321,17 +299,14 @@ extension HomeController: UICollectionViewDelegate {
         
         collectionView.deselectItem(at: indexPath, animated: true)
     }
-    
-
-    
-//        let detailViewController = EmojiDetailViewController(with: emoji)
-//        self.navigationController?.pushViewController(detailViewController, animated: true)
 }
 
 extension HomeController: NSFetchedResultsControllerDelegate {
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        updateSnapshot()
+    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+
     }
+    
 }
 
 extension HomeController: UISearchControllerDelegate, UISearchBarDelegate  {

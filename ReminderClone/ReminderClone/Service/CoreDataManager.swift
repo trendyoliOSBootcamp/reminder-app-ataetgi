@@ -29,7 +29,9 @@ struct CoreDataManager {
         list.icon = icon
         list.name = name
         list.date = date
-        return saveContext(list)
+        return saveContext(list) { list in
+            NotificationCenter.default.post(name: .createList, object: nil)
+        }
     }
     
     @discardableResult
@@ -42,19 +44,17 @@ struct CoreDataManager {
         reminder.priority = priority
         reminder.title = title
         reminder.list = list
-        return saveContext(reminder)
+        return saveContext(reminder) { reminder in
+            NotificationCenter.default.post(name: .createReminder, object: nil)
+        }
     }
     
-    
-    func saveContext<T>(_ object: T? = nil) -> (type: T?, error: Error?) {
+    @discardableResult
+    func saveContext<T>(_ object: T? = nil, completion: @escaping (T?) -> ()) -> (type: T?, error: Error?) {
         if persistentContainer.viewContext.hasChanges {
             do {
                 try persistentContainer.viewContext.save()
-                if object is List {
-                    NotificationCenter.default.post(name: .createList, object: nil)
-                } else if object is Reminder {
-                    NotificationCenter.default.post(name: .createReminder, object: nil)
-                }
+                completion(object)
                 return (object, nil)
             } catch {
                 print("An error occured while saving: \(error)")

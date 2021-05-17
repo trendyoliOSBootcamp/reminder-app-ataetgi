@@ -38,6 +38,15 @@ class AddListController: BaseAddController {
         return tf
     }()
     
+    var list: List? {
+        didSet {
+            guard let list = list else { return }
+            textField.text = list.name
+            selectedIcon = list.icon
+            selectedColor = list.color
+        }
+    }
+    
     @objc private func textChanged(sender: UITextField) {
         navigationItem.rightBarButtonItem?.isEnabled = sender.hasText
     }
@@ -64,14 +73,28 @@ class AddListController: BaseAddController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "New List"
+        title = list?.name == nil ? "New List" : "Name & Appearance"
         setupViews()
         configureDataSource()
         collectionView.selectItem(at: [0,4], animated: false, scrollPosition: .bottom)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.rightBarButtonItem?.isEnabled = list != nil
+    }
+    
     @objc override func doneTapped() {
-        CoreDataManager.shared.createList(color: selectedColor, icon: selectedIcon, name: textField.text ?? "", date: Date())
+        if let list = list {
+            list.name = textField.text ?? ""
+            list.color = selectedColor
+            list.icon = selectedIcon
+            CoreDataManager.shared.saveContext(list) { _ in
+                NotificationCenter.default.post(name: .createList, object: nil)
+            }
+        } else {
+            CoreDataManager.shared.createList(color: selectedColor, icon: selectedIcon, name: textField.text ?? "", date: Date())
+        }
         super.doneTapped()
     }
     
@@ -141,7 +164,6 @@ class AddListController: BaseAddController {
         imageView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 20, left: 0, bottom: 0, right: 0), size: .init(width: 100, height: 100))
         
         view.addSubview(textField)
-//        textField.delegate = self
         textField.becomeFirstResponder()
         textField.anchor(top: imageView.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
         

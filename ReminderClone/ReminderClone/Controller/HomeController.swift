@@ -286,6 +286,12 @@ extension HomeController: UICollectionViewDelegate {
                 let listController = ListController(list: list)
                 navigationController?.pushViewController(listController, animated: true)
             }
+        } else {
+            if indexPath.item == 0 {
+                print("all")
+            } else {
+                print("flag")
+            }
         }
         collectionView.deselectItem(at: indexPath, animated: true)
     }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 extension HomeController: UISearchResultsUpdating {
     
@@ -14,25 +15,16 @@ extension HomeController: UISearchResultsUpdating {
     }
     
     func updateSearchResults(for searchController: UISearchController) {
-        // Update the filtered array based on the search text.
-        let searchResults = fetchedReminderResultsController.fetchedObjects
-        
-        let whitespaceCharacterSet = CharacterSet.whitespaces
-        let strippedString =
-            searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
-        let searchItems = strippedString.components(separatedBy: " ") as [String]
-        
-        let andMatchPredicates: [NSPredicate] = searchItems.map { searchString in
-            findMatches(searchString: searchString)
-        }
-        
-        let finalCompoundPredicate =
-            NSCompoundPredicate(andPredicateWithSubpredicates: andMatchPredicates)
-        
-        let filteredResults = searchResults?.filter { finalCompoundPredicate.evaluate(with: $0) }
+        let request = Reminder.createFetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        request.predicate = findMatches(searchString: searchController.searchBar.text!.trimmingCharacters(in: .whitespaces))
+        let controller = NSFetchedResultsController(fetchRequest: request,
+                                                    managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext,
+                                                    sectionNameKeyPath: "list", cacheName: nil)
+        try? controller.performFetch()
         
         if let resultsController = searchController.searchResultsController as? ResultsController {
-            resultsController.filteredProducts = filteredResults ?? []
+            resultsController.fetchedResultsController = controller
             resultsController.tableView.reloadData()
         }
         

@@ -6,22 +6,17 @@
 //
 
 import UIKit
+import CoreData
 
 class ResultsController: UITableViewController {
     
     let cellId = "cellId"
     
-    var lists = [List:[Reminder]]()
-    
-    var filteredProducts = [Reminder]() {
-        didSet{
-            lists = Dictionary(grouping: filteredProducts, by: { $0.list })
-        }
-    }
-    
+    var fetchedResultsController: NSFetchedResultsController<Reminder>!
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView = UITableView(frame: tableView.frame, style: .grouped)
+        tableView.backgroundColor = .systemGroupedBackground
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
         tableView.showsVerticalScrollIndicator = false
@@ -31,33 +26,17 @@ class ResultsController: UITableViewController {
 
 extension ResultsController {
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return lists.keys.count
+        return fetchedResultsController.sections?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Array(lists.keys)[section].reminders?.count ?? 0
+        return fetchedResultsController.sections![section].numberOfObjects
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ReminderCell
-        let reminder = Array(lists.keys)[indexPath.section].reminders?[indexPath.row] as? Reminder
-        cell.priortyLabel.text = String(repeating: "!", count: Int(reminder?.priority ?? 0))
-        cell.isDoneSwitch.tintColor = Array(lists.keys)[indexPath.section].color
-        cell.isDoneSwitch.setStatus(reminder?.done ?? false)
-        cell.textView.text = reminder?.title
-        cell.flagImageView.alpha = (reminder?.flag ?? true) ? 1 : 0
-        cell.textChanged { [weak tableView] (newText: String) in
-            if let reminder = reminder {
-                reminder.title = newText
-            }
-            DispatchQueue.main.async {
-                tableView?.beginUpdates()
-                tableView?.endUpdates()
-            }
-        }
-        if indexPath.row == (Array(lists.keys)[indexPath.section].reminders?.count ?? 0) - 1 {
-            cell.seperator.alpha = 0
-        }
+        let reminder = fetchedResultsController.object(at: indexPath)
+        cell.reminder = reminder
         return cell
     }
     
@@ -66,10 +45,13 @@ extension ResultsController {
     }
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {
-            let list = Array(lists.keys)[section]
+            let list = (fetchedResultsController.sections![section].objects!.first as! Reminder).list
             headerView.textLabel?.text = list.name
             headerView.textLabel?.textColor = list.color
             headerView.textLabel?.font = .boldSystemFont(ofSize: 18)
+            var bgConfig = UIBackgroundConfiguration.listPlainHeaderFooter()
+            bgConfig.backgroundColor = tableView.backgroundColor
+            headerView.backgroundConfiguration = bgConfig
         }
     }
     
@@ -78,10 +60,8 @@ extension ResultsController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let reminder = Array(lists.keys)[indexPath.section].reminders?[indexPath.row] as? Reminder {
-            return reminder.title.heightWithConstrainedWidth(width: tableView.frame.width - 120, font: UIFont.systemFont(ofSize: 14)) + 22
-        }
-        return 46
+        let reminder = fetchedResultsController.object(at: indexPath)
+        return reminder.title.heightWithConstrainedWidth(width: tableView.frame.width - 120, font: UIFont.systemFont(ofSize: 16)) + 26
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {

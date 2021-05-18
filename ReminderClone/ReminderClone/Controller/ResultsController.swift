@@ -17,8 +17,9 @@ class ResultsController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .systemGroupedBackground
-        tableView.separatorStyle = .none
         tableView.allowsSelection = false
+        tableView.layoutMargins = .zero
+        tableView.separatorInset = .init(top: 0, left: 44, bottom: 0, right: 0)
         tableView.showsVerticalScrollIndicator = false
         tableView.register(ReminderCell.self, forCellReuseIdentifier: cellId)
     }
@@ -43,13 +44,15 @@ extension ResultsController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Title"
     }
+    
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {
             let list = (fetchedResultsController.sections![section].objects!.first as! Reminder).list
-            headerView.textLabel?.text = list.name
-            headerView.textLabel?.textColor = list.color
-            headerView.textLabel?.font = .boldSystemFont(ofSize: 18)
-            var bgConfig = UIBackgroundConfiguration.listPlainHeaderFooter()
+            var content = UIListContentConfiguration.plainHeader()
+            content.text = list.name
+            content.textProperties.color = list.color
+            headerView.contentConfiguration = content
+            var bgConfig = UIBackgroundConfiguration.clear()
             bgConfig.backgroundColor = tableView.backgroundColor
             headerView.backgroundConfiguration = bgConfig
         }
@@ -61,18 +64,16 @@ extension ResultsController {
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let reminder = fetchedResultsController.object(at: indexPath)
-        return reminder.title.heightWithConstrainedWidth(width: tableView.frame.width - 120, font: UIFont.systemFont(ofSize: 16)) + 26
+        return reminder.title.heightWithConstrainedWidth(width: tableView.frame.width - 120, font: UIFont.systemFont(ofSize: 16)) + 28
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-        // UIView with darkGray background for section-separators as Section Footer
         let v = UIView(frame: CGRect(x: 0, y:0, width: tableView.frame.width, height: 1))
         v.backgroundColor = .secondarySystemBackground
         return v
     }
 
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        // Section Footer height
         return 2
     }
 }

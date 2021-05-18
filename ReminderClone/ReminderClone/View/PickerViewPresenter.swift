@@ -77,10 +77,11 @@ class PickerViewPresenter: UITextField, UIPickerViewDataSource, UIPickerViewDele
     }
 }
 
+enum PickerType {
+    case priorty, list
+}
 struct PickerItem {
-    enum PickerType {
-        case priorty, list
-    }
+
     let name: String
     let objectId: NSManagedObjectID?
     let type: PickerType
@@ -102,3 +103,4 @@ struct PickerItem {
         }
     }
 }
+

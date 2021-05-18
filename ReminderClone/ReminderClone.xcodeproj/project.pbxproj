@@ -29,6 +29,7 @@
 		5F7C87232651741500783AEA /* ResultsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87222651741500783AEA /* ResultsController.swift */; };
 		5F7C8725265184B800783AEA /* HomeController+Updating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8724265184B800783AEA /* HomeController+Updating.swift */; };
 		5F7C87272653291900783AEA /* AllController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87262653291800783AEA /* AllController.swift */; };
+		5F7C87292653E24200783AEA /* FlagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87282653E24100783AEA /* FlagController.swift */; };
 		5FEEA841264D75790008C99C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA840264D75790008C99C /* AppDelegate.swift */; };
 		5FEEA843264D75790008C99C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA842264D75790008C99C /* SceneDelegate.swift */; };
 		5FEEA845264D75790008C99C /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA844264D75790008C99C /* HomeController.swift */; };
@@ -65,6 +66,7 @@
 		5F7C87222651741500783AEA /* ResultsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsController.swift; sourceTree = "<group>"; };
 		5F7C8724265184B800783AEA /* HomeController+Updating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeController+Updating.swift"; sourceTree = "<group>"; };
 		5F7C87262653291800783AEA /* AllController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllController.swift; sourceTree = "<group>"; };
+		5F7C87282653E24100783AEA /* FlagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagController.swift; sourceTree = "<group>"; };
 		5FEEA83D264D75790008C99C /* ReminderClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReminderClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FEEA840264D75790008C99C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FEEA842264D75790008C99C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				5F7C8709264F5D2600783AEA /* BaseAddController.swift */,
 				5F7C871726511F7300783AEA /* ListController.swift */,
 				5F7C87262653291800783AEA /* AllController.swift */,
+				5F7C87282653E24100783AEA /* FlagController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -305,6 +308,7 @@
 				5F7C86F9264E2BFB00783AEA /* PaddedTextField.swift in Sources */,
 				5FEEA843264D75790008C99C /* SceneDelegate.swift in Sources */,
 				5F239C08264DCFDA009E9F16 /* CoreDataManager.swift in Sources */,
+				5F7C87292653E24200783AEA /* FlagController.swift in Sources */,
 				5FEEA85F264DCB0F0008C99C /* Reminder+CoreDataProperties.swift in Sources */,
 				5FEEA861264DCB0F0008C99C /* List+CoreDataProperties.swift in Sources */,
 				5F7C8704264E672E00783AEA /* UIImage+Extensions.swift in Sources */,

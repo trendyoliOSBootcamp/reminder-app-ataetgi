@@ -40,12 +40,13 @@ class ListController: UITableViewController, AddEditReminderProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.backgroundView = UIView()
         tableView.allowsSelection = false
         tableView.backgroundColor = .systemGroupedBackground
-        tableView.separatorStyle = .none
+        tableView.layoutMargins = .zero
+        tableView.separatorInset = .init(top: 0, left: 44, bottom: 0, right: 0)
         tableView.backgroundView = noReminderLabel
+        tableView.tableFooterView = UIView()
+        tableView.tableHeaderView = UIView()
         tableView.register(ReminderCell.self, forCellReuseIdentifier: reuseIdentifier)
         toolbarItems = [UIBarButtonItem(customView: addReminderButton), .flexibleSpace()]
     }
@@ -121,6 +122,7 @@ extension ListController {
                 tableView?.endUpdates()
             }
         }
+        cell.layoutMargins = .zero
         return cell
     }
     
@@ -195,6 +197,7 @@ extension ListController {
                     return
                 }
                 tableView.reloadRows(at: [indexPath], with: .automatic)
+                NotificationCenter.default.post(name: .updateReminder, object: nil)
                 completion(true)
             }
         }

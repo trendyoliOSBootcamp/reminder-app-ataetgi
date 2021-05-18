@@ -26,12 +26,12 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
         return sw
     }()
     
-    let seperator: UIView = {
-        let view = UIView()
-        view.backgroundColor = .quaternaryLabel
-        view.constrainHeight(constant: 1)
-        return view
-    }()
+//    let seperator: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = .quaternaryLabel
+//        view.constrainHeight(constant: 1)
+//        return view
+//    }()
     
     let priortyLabel: UILabel = {
         let lbl = UILabel()
@@ -71,8 +71,8 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
         textView.anchor(top: topAnchor, leading: priortyLabel.trailingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 2, left: 2, bottom: 0, right: 40))
         contentView.addSubview(flagImageView)
         flagImageView.anchor(top: topAnchor, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 12, left: 0, bottom: 0, right: 20), size: .init(width: 14, height: 14))
-        contentView.addSubview(seperator)
-        seperator.anchor(top: nil, leading: priortyLabel.leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
+//        contentView.addSubview(seperator)
+//        seperator.anchor(top: nil, leading: priortyLabel.leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
     }
     
     required init?(coder: NSCoder) {

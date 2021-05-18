@@ -69,6 +69,7 @@ class HomeController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.toolbar.isHidden = false
     }
     
     lazy var addReminderButton = UIBarButtonItem(customView: createReminderButton(selector: #selector(addReminder)))
@@ -89,10 +90,6 @@ class HomeController: UIViewController {
     @objc func addReminder() {
         print(#function)
         let addReminderController = AddEditReminderController()
-//        addReminderController.lists = dataSource.snapshot().itemIdentifiers(inSection: .list).map({ list in
-//            let list = list as! List
-//            return PickerItem(name: list.name, objectId: list.objectID, type: .list)
-//        })
         present(UINavigationController(rootViewController: addReminderController), animated: true, completion: nil)
     }
     
@@ -288,9 +285,9 @@ extension HomeController: UICollectionViewDelegate {
             }
         } else {
             if indexPath.item == 0 {
-                print("all")
+                navigationController?.pushViewController(AllController(), animated: true)
             } else {
-                print("flag")
+                navigationController?.pushViewController(FlagController(), animated: true)
             }
         }
         collectionView.deselectItem(at: indexPath, animated: true)

@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SwiftUI
 
 class ListController: UITableViewController, AddEditReminderDelegate {
     
@@ -34,7 +33,6 @@ class ListController: UITableViewController, AddEditReminderDelegate {
         return label
     }()
     
-    let reuseIdentifier = "reuseIdentifier"
     var list: List!
     
     override func viewDidLoad() {
@@ -46,7 +44,7 @@ class ListController: UITableViewController, AddEditReminderDelegate {
         tableView.backgroundView = noReminderLabel
         tableView.tableFooterView = UIView()
         tableView.tableHeaderView = UIView()
-        tableView.register(ReminderCell.self, forCellReuseIdentifier: reuseIdentifier)
+        tableView.register(ReminderCell.self, forCellReuseIdentifier: ReminderCell.reuseIdentifier)
         toolbarItems = [UIBarButtonItem(customView: addReminderButton), .flexibleSpace()]
     }
 
@@ -71,10 +69,9 @@ class ListController: UITableViewController, AddEditReminderDelegate {
         }
     }
     
-    var tempReminder: Reminder!
+    private var tempReminder: Reminder!
     
     @objc private func addNewReminder() {
-        print(#function)
         view.endEditing(true)
         if tempReminder != nil && tempReminder.title.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
             list.removeFromReminders(tempReminder)
@@ -105,11 +102,11 @@ class ListController: UITableViewController, AddEditReminderDelegate {
 
 extension ListController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return list?.reminders?.count ?? 10
+        return list?.reminders?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! ReminderCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ReminderCell.reuseIdentifier, for: indexPath) as! ReminderCell
         let reminder = list?.reminders?[indexPath.row] as? Reminder
         cell.reminder = reminder
         cell.textChanged { [weak tableView] (newText: String) in
@@ -128,7 +125,6 @@ extension ListController {
     override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         if let reminders = list?.reminders, reminders.count == 0 {
             return tableView.frame.height - (tableView.contentSize.height + 300)
-
         } else {
             return 0
         }
@@ -205,21 +201,5 @@ extension ListController {
         detailsAction.backgroundColor = .systemGray
         flagAction.backgroundColor = .systemOrange
         return UISwipeActionsConfiguration(actions: [deleteAction, flagAction, detailsAction])
-    }
-    
-}
-
-struct ListPreview: PreviewProvider {
-    static var previews: some View {
-        ContainerView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainerView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> some UIViewController {
-            UINavigationController(rootViewController: ListController(list: nil))
-        }
-        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-            
-        }
     }
 }

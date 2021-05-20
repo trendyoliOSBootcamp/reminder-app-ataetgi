@@ -30,6 +30,7 @@
 		5F7C8725265184B800783AEA /* HomeController+Updating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C8724265184B800783AEA /* HomeController+Updating.swift */; };
 		5F7C87272653291900783AEA /* AllController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87262653291800783AEA /* AllController.swift */; };
 		5F7C87292653E24200783AEA /* FlagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C87282653E24100783AEA /* FlagController.swift */; };
+		5F7C872C26562EA800783AEA /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7C872B26562EA800783AEA /* UITableView+Extensions.swift */; };
 		5FEEA841264D75790008C99C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA840264D75790008C99C /* AppDelegate.swift */; };
 		5FEEA843264D75790008C99C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA842264D75790008C99C /* SceneDelegate.swift */; };
 		5FEEA845264D75790008C99C /* HomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FEEA844264D75790008C99C /* HomeController.swift */; };
@@ -67,6 +68,7 @@
 		5F7C8724265184B800783AEA /* HomeController+Updating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeController+Updating.swift"; sourceTree = "<group>"; };
 		5F7C87262653291800783AEA /* AllController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllController.swift; sourceTree = "<group>"; };
 		5F7C87282653E24100783AEA /* FlagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagController.swift; sourceTree = "<group>"; };
+		5F7C872B26562EA800783AEA /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		5FEEA83D264D75790008C99C /* ReminderClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReminderClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FEEA840264D75790008C99C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5FEEA842264D75790008C99C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				5F7C8703264E672E00783AEA /* UIImage+Extensions.swift */,
 				5F7C87192651259500783AEA /* UIViewController+Extensions.swift */,
 				5F7C871E265145A800783AEA /* String+Extensions.swift */,
+				5F7C872B26562EA800783AEA /* UITableView+Extensions.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -177,6 +180,16 @@
 			path = List;
 			sourceTree = "<group>";
 		};
+		5F7C872A2656240B00783AEA /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				5FEEA84E264D757C0008C99C /* LaunchScreen.storyboard */,
+				5FEEA840264D75790008C99C /* AppDelegate.swift */,
+				5FEEA842264D75790008C99C /* SceneDelegate.swift */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
 		5FEEA834264D75790008C99C = {
 			isa = PBXGroup;
 			children = (
@@ -200,17 +213,15 @@
 		5FEEA83F264D75790008C99C /* ReminderClone */ = {
 			isa = PBXGroup;
 			children = (
+				5F7C872A2656240B00783AEA /* Application */,
 				5F239C06264DCFCA009E9F16 /* Service */,
 				5F239C05264DCD4B009E9F16 /* Extension */,
-				5FEEA840264D75790008C99C /* AppDelegate.swift */,
-				5FEEA842264D75790008C99C /* SceneDelegate.swift */,
 				5F7C86FA264E2C0700783AEA /* View */,
 				5F239C04264DCD42009E9F16 /* Controller */,
 				5FEEA846264D75790008C99C /* Main.storyboard */,
 				5FEEA84C264D757C0008C99C /* Assets.xcassets */,
-				5FEEA84E264D757C0008C99C /* LaunchScreen.storyboard */,
-				5FEEA851264D757C0008C99C /* Info.plist */,
 				5FEEA849264D75790008C99C /* ReminderClone.xcdatamodeld */,
+				5FEEA851264D757C0008C99C /* Info.plist */,
 			);
 			path = ReminderClone;
 			sourceTree = "<group>";
@@ -304,6 +315,7 @@
 				5F7C86FC264E3F6600783AEA /* NewListCell.swift in Sources */,
 				5F7C8725265184B800783AEA /* HomeController+Updating.swift in Sources */,
 				5F7C872126514FA200783AEA /* CustomSwitch.swift in Sources */,
+				5F7C872C26562EA800783AEA /* UITableView+Extensions.swift in Sources */,
 				5F7C87232651741500783AEA /* ResultsController.swift in Sources */,
 				5F7C86F9264E2BFB00783AEA /* PaddedTextField.swift in Sources */,
 				5FEEA843264D75790008C99C /* SceneDelegate.swift in Sources */,

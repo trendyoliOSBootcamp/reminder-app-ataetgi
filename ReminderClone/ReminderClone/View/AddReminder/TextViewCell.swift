@@ -12,6 +12,7 @@ protocol TextViewCellDelegate: AnyObject {
 
 class TextViewCell: UITableViewCell, UITextViewDelegate {
     
+    static let reuseIdentifier = "TextViewCellReuseIdentifier"
     weak var delegate: TextViewCellDelegate?
     
     let textView: UITextView = {
@@ -32,9 +33,11 @@ class TextViewCell: UITableViewCell, UITextViewDelegate {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.addSubview(textView)
-        textView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor, padding: .init(top: 5, left: 10, bottom: 5, right: 10))
+        textView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor,
+                        padding: .init(top: 5, left: 10, bottom: 5, right: 10))
         textView.addSubview(placeholderLabel)
-        placeholderLabel.anchor(top: textView.topAnchor, leading: textView.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 10, left: 10, bottom: 0, right: 0))
+        placeholderLabel.anchor(top: textView.topAnchor, leading: textView.leadingAnchor, bottom: nil, trailing: nil,
+                                padding: .init(top: 10, left: 10, bottom: 0, right: 0))
         textView.delegate = self
         
     }

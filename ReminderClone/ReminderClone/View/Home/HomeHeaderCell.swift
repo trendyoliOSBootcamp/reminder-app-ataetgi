@@ -44,10 +44,12 @@ class HomeHeaderCell: UICollectionViewCell {
         super.init(frame: frame)
         let containerView = UIView()
         contentView.addSubview(containerView)
-        containerView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor, padding: .init(top: 12, left: 12, bottom: 12, right: 12))
+        containerView.anchor(top: contentView.topAnchor, leading: contentView.leadingAnchor, bottom: contentView.bottomAnchor, trailing: contentView.trailingAnchor,
+                             padding: .init(top: 12, left: 12, bottom: 12, right: 12))
         contentView.addSubview(imageBackground)
         
-        imageBackground.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, bottom: nil, trailing: nil, size: .init(width: iconSize, height: iconSize))
+        imageBackground.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, bottom: nil, trailing: nil,
+                               size: .init(width: iconSize, height: iconSize))
         imageBackground.layer.cornerRadius = iconSize / 2
         
         imageBackground.addSubview(iconView)
@@ -58,7 +60,8 @@ class HomeHeaderCell: UICollectionViewCell {
         countLabel.anchor(top: imageBackground.topAnchor, leading: nil, bottom: nil, trailing: containerView.trailingAnchor)
         
         addSubview(titleLabel)
-        titleLabel.anchor(top: imageBackground.bottomAnchor, leading: imageBackground.leadingAnchor, bottom: nil, trailing: nil, padding: .init(top: 12, left: 0, bottom: 0, right: 0))
+        titleLabel.anchor(top: imageBackground.bottomAnchor, leading: imageBackground.leadingAnchor, bottom: nil, trailing: nil,
+                          padding: .init(top: 12, left: 0, bottom: 0, right: 0))
     }
     
     required init?(coder: NSCoder) {

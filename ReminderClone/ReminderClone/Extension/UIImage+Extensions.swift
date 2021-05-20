@@ -46,10 +46,4 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return image
     }
-    
-//    let imageLayer = CALayer()
-//    imageLayer.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-//    imageLayer.contents = cgImage
-//    imageLayer.masksToBounds = true
-//    imageLayer.cornerRadius = cornerRadius
 }

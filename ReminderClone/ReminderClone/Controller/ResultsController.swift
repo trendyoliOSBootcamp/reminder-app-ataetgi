@@ -10,7 +10,6 @@ import CoreData
 
 class ResultsController: UITableViewController {
     
-    let cellId = "cellId"
     var fetchedResultsController: NSFetchedResultsController<Reminder>?
     
     override func viewDidLoad() {
@@ -25,7 +24,7 @@ class ResultsController: UITableViewController {
         tableView.tableFooterView = UIView()
         tableView.separatorInset = .init(top: 0, left: 44, bottom: 0, right: 0)
         tableView.showsVerticalScrollIndicator = false
-        tableView.register(ReminderCell.self, forCellReuseIdentifier: cellId)
+        tableView.register(ReminderCell.self, forCellReuseIdentifier: ReminderCell.reuseIdentifier)
     }
 }
 
@@ -39,7 +38,7 @@ extension ResultsController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ReminderCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ReminderCell.reuseIdentifier, for: indexPath) as! ReminderCell
         let reminder = fetchedResultsController?.object(at: indexPath)
         cell.reminder = reminder
         return cell

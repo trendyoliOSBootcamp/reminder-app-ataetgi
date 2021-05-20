@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch
         ColorValueTransformer.register()
         UINavigationBar.appearance().prefersLargeTitles = true
-        print(NSHomeDirectory())
+        debugPrint(NSHomeDirectory())
         
         isLaunched = UserDefaults.standard.bool(forKey: isLaunchedKey)
         if !isLaunched {

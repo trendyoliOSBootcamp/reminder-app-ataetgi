@@ -9,6 +9,8 @@ import UIKit
 
 class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
     
+    static let reuseIdentifier = "ReminderCell"
+    
     let textView: UITextView = {
         let tv = UITextView()
         tv.textContainerInset = .init(top: 10, left: 2, bottom: 10, right: 2)
@@ -58,15 +60,17 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
         backgroundColor = .systemGroupedBackground
         textView.delegate = self
         contentView.addSubview(isDoneSwitch)
-        isDoneSwitch.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: nil,padding: .init(top: 0, left: 8, bottom: 0, right: 4), size: .init(width: 44, height: 44))
+        isDoneSwitch.anchor(top: topAnchor, leading: leadingAnchor, bottom: nil, trailing: nil,
+                            padding: .init(top: 0, left: 8, bottom: 0, right: 4), size: .init(width: 44, height: 44))
         contentView.addSubview(priortyLabel)
-        priortyLabel.anchor(top: topAnchor, leading: isDoneSwitch.trailingAnchor, bottom: nil, trailing: nil, padding: .init(top: 12, left: 0, bottom: 0, right: 0))
+        priortyLabel.anchor(top: topAnchor, leading: isDoneSwitch.trailingAnchor, bottom: nil, trailing: nil,
+                            padding: .init(top: 12, left: 0, bottom: 0, right: 0))
         contentView.addSubview(textView)
-        textView.anchor(top: topAnchor, leading: priortyLabel.trailingAnchor, bottom: nil, trailing: trailingAnchor, padding: .init(top: 2, left: 2, bottom: 0, right: 40))
+        textView.anchor(top: topAnchor, leading: priortyLabel.trailingAnchor, bottom: nil, trailing: trailingAnchor,
+                        padding: .init(top: 2, left: 2, bottom: 0, right: 40))
         contentView.addSubview(flagImageView)
-        flagImageView.anchor(top: topAnchor, leading: nil, bottom: nil, trailing: trailingAnchor,padding: .init(top: 12, left: 0, bottom: 0, right: 20), size: .init(width: 14, height: 14))
-//        contentView.addSubview(seperator)
-//        seperator.anchor(top: nil, leading: priortyLabel.leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
+        flagImageView.anchor(top: topAnchor, leading: nil, bottom: nil, trailing: trailingAnchor,
+                             padding: .init(top: 12, left: 0, bottom: 0, right: 20), size: .init(width: 14, height: 14))
     }
     
     required init?(coder: NSCoder) {
@@ -96,5 +100,4 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
         reminder?.done = customSwitch.status
         CoreDataManager.shared.saveContext(completion: nil)
     }
-    
 }

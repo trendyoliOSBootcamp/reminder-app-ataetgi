@@ -14,8 +14,7 @@ class BaseAddController: UIViewController {
         setupNavigationBar()
     }
     
-    
-    fileprivate func setupNavigationBar() {
+    private func setupNavigationBar() {
         let navigationBarAppearence = UINavigationBarAppearance()
         navigationBarAppearence.backgroundColor = .systemGroupedBackground
         navigationBarAppearence.shadowColor = .clear

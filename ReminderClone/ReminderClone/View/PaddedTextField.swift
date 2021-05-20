@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 open class PaddedTextField: UITextField {
     public var textInsets = UIEdgeInsets.zero {
         didSet {
@@ -26,7 +27,7 @@ open class PaddedTextField: UITextField {
     }
     
     open override func textRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.inset(by: .init(top: textInsets.top, left: textInsets.left, bottom: textInsets.bottom, right: textInsets.right))
+        return bounds.inset(by: textInsets)
     }
     
     open override func editingRect(forBounds bounds: CGRect) -> CGRect {
@@ -38,7 +39,7 @@ open class PaddedTextField: UITextField {
     }
     
     open override func drawText(in rect: CGRect) {
-        super.drawText(in: rect.inset(by: .init(top: textInsets.top, left: textInsets.left, bottom: textInsets.bottom, right: textInsets.right)))
+        super.drawText(in: rect.inset(by: textInsets))
     }
     
     open override func clearButtonRect(forBounds bounds: CGRect) -> CGRect{

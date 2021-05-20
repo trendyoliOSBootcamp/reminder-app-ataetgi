@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-class HomeController: UIViewController {
+final class HomeController: UIViewController {
     
     enum Section: Int, CaseIterable, CustomStringConvertible {
         case header, list
@@ -29,16 +29,18 @@ class HomeController: UIViewController {
         private let identifier = UUID()
     }
     
-    var collectionView: UICollectionView!
-    var searchController: UISearchController!
+    private var collectionView: UICollectionView!
+    private var searchController: UISearchController!
     
-    var dataSource: UICollectionViewDiffableDataSource<Section, AnyHashable>!
-    var diffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
-    var request: NSFetchRequest<List>!
-    var fetchedListResultsController: NSFetchedResultsController<List>!
+    private var dataSource: UICollectionViewDiffableDataSource<Section, AnyHashable>!
+    private var diffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
+    private var request: NSFetchRequest<List>!
+    private var fetchedListResultsController: NSFetchedResultsController<List>!
     
-    var reminderRequest: NSFetchRequest<Reminder>!
-    var fetchedReminderResultsController: NSFetchedResultsController<Reminder>!
+    private var reminderRequest: NSFetchRequest<Reminder>!
+    private var fetchedReminderResultsController: NSFetchedResultsController<Reminder>!
+    
+    private lazy var addReminderButton = UIBarButtonItem(customView: createReminderButton(selector: #selector(addReminder)))
  
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +53,6 @@ class HomeController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .updateList, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .updateReminder, object: nil)
-
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,8 +60,6 @@ class HomeController: UIViewController {
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.toolbar.isHidden = false
     }
-    
-    lazy var addReminderButton = UIBarButtonItem(customView: createReminderButton(selector: #selector(addReminder)))
     
     private func setupSearchController() {
         let resultsController = ResultsController()
@@ -87,20 +86,18 @@ class HomeController: UIViewController {
         ]
     }
     
-    @objc func addReminder() {
-        print(#function)
+    @objc private func addReminder() {
         let addReminderController = AddEditReminderController()
         present(UINavigationController(rootViewController: addReminderController), animated: true, completion: nil)
     }
     
-    @objc func addList() {
-        print(#function)
+    @objc private func addList() {
         let addListController = UINavigationController(rootViewController: AddEditListController())
         present(addListController, animated: true, completion: nil)
     }
 
     
-    func configureCollectionView() {
+    private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.frame, collectionViewLayout: createLayout())
         collectionView.autoresizingMask = [.flexibleHeight, .flexibleHeight]
         collectionView.backgroundColor = .systemGroupedBackground
@@ -108,7 +105,7 @@ class HomeController: UIViewController {
         view.addSubview(collectionView)
     }
     
-    func createLayout() -> UICollectionViewLayout {
+    private func createLayout() -> UICollectionViewLayout {
         let sectionProvider = { (sectionIndex: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             
             guard let sectionKind = Section(rawValue: sectionIndex) else { return nil }
@@ -139,14 +136,14 @@ class HomeController: UIViewController {
         return UICollectionViewCompositionalLayout(sectionProvider: sectionProvider)
     }
     
-    func accessoriesForListCellItem(_ list: List) -> [UICellAccessory] {
+    private func accessoriesForListCellItem(_ list: List) -> [UICellAccessory] {
         var accessories = [UICellAccessory.disclosureIndicator()]
         let countLabel = UILabel()
         accessories.append(.customView(configuration: .init(customView: countLabel, placement: .trailing())))
         return accessories
     }
     
-    func leadingSwipeActionConfigurationForListCellItem(_ item: List) -> UISwipeActionsConfiguration? {
+    private func leadingSwipeActionConfigurationForListCellItem(_ item: List) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: nil) {
             [weak self] (_, _, completion) in
             guard let self = self else {
@@ -160,7 +157,7 @@ class HomeController: UIViewController {
                     self.updateSnapshot()
                     completion(true)
                 } catch {
-                    print("An error occured while saving: \(error)")
+                    debugPrint("An error occured while saving: \(error)")
                     completion(false)
                 }
             }
@@ -187,7 +184,7 @@ class HomeController: UIViewController {
         return UISwipeActionsConfiguration(actions: [deleteAction, infoAction])
     }
     
-    func createGridCellRegistration() -> UICollectionView.CellRegistration<HomeHeaderCell, HeaderItem> {
+    private func createGridCellRegistration() -> UICollectionView.CellRegistration<HomeHeaderCell, HeaderItem> {
         return UICollectionView.CellRegistration<HomeHeaderCell, HeaderItem> { (cell, indexPath, header) in
             cell.countLabel.text = "\(header.count)"
             cell.titleLabel.text = "\(header.title)"
@@ -199,7 +196,7 @@ class HomeController: UIViewController {
         }
     }
     
-    func createListCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, List> {
+    private func createListCellRegistration() -> UICollectionView.CellRegistration<UICollectionViewListCell, List> {
         return UICollectionView.CellRegistration<UICollectionViewListCell, List> { [weak self] (cell, indexPath, item) in
             guard let self = self else { return }
             var content = UIListContentConfiguration.valueCell()
@@ -216,7 +213,7 @@ class HomeController: UIViewController {
         }
     }
     
-    func configureDataSource() {
+    private func configureDataSource() {
         let gridCellRegistration = createGridCellRegistration()
         let listCellRegistration = createListCellRegistration()
 
@@ -232,16 +229,18 @@ class HomeController: UIViewController {
         }
     }
     
-    fileprivate func coreDataRequest() {
+    private func coreDataRequest() {
+        let context = CoreDataManager.shared.persistentContainer.viewContext
+        
         request = List.createFetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
 
-        fetchedListResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedListResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         fetchedListResultsController.delegate = self
         
         reminderRequest = Reminder.createFetchRequest()
         reminderRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
-        fetchedReminderResultsController = NSFetchedResultsController(fetchRequest: reminderRequest, managedObjectContext: CoreDataManager.shared.persistentContainer.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedReminderResultsController = NSFetchedResultsController(fetchRequest: reminderRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         fetchedReminderResultsController.delegate = self
         
         do {
@@ -249,18 +248,18 @@ class HomeController: UIViewController {
             try fetchedReminderResultsController.performFetch()
             updateSnapshot(animated: false)
         } catch {
-            print(error)
+            debugPrint(error)
         }
     }
     
     @objc private func updateSnapshot(animated: Bool = true) {
         
-        let flagsCount = fetchedReminderResultsController.fetchedObjects?.filter({ $0.flag })
-        let allCount = fetchedReminderResultsController.fetchedObjects
-                
+        let allReminders = fetchedReminderResultsController.fetchedObjects
+        let flaggedReminders = allReminders?.filter({ $0.flag })
+        
         let headers = [
-            HeaderItem(title: "All", icon: "tray.fill", count: allCount?.count ?? 0, color: .darkGray),
-            HeaderItem(title: "Flagged", icon: "flag.fill", count: flagsCount?.count ?? 0, color: .systemOrange),
+            HeaderItem(title: "All", icon: "tray.fill", count: allReminders?.count ?? 0, color: .darkGray),
+            HeaderItem(title: "Flagged", icon: "flag.fill", count: flaggedReminders?.count ?? 0, color: .systemOrange)
         ]
 
         addReminderButton.isEnabled = !(fetchedListResultsController.fetchedObjects?.isEmpty ?? true)
@@ -276,7 +275,6 @@ class HomeController: UIViewController {
 
 extension HomeController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(#function)
         if indexPath.section == 1 {
             if let list = dataSource.itemIdentifier(for: indexPath) as? List {
                 let listController = ListController(list: list)

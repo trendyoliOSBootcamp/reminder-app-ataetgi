@@ -92,7 +92,7 @@ class AddEditReminderController: BaseAddController {
         }
     }
     
-    var tableView: UITableView!
+    private var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -112,13 +112,13 @@ class AddEditReminderController: BaseAddController {
         view.addSubview(tableView)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(TextViewCell.self, forCellReuseIdentifier: "textFieldReuse")
+        tableView.register(TextViewCell.self, forCellReuseIdentifier: TextViewCell.reuseIdentifier)
     }
     
     override func doneTapped() {
         super.doneTapped()
-        guard let objectId = selectedList?.objectId else { return }
-        guard let list = CoreDataManager.shared.persistentContainer.viewContext.object(with:  objectId) as? List else { return }
+        guard let objectId = selectedList?.objectId,
+              let list = CoreDataManager.shared.persistentContainer.viewContext.object(with:  objectId) as? List else { return }
         
         if let reminder = reminder {
             reminder.flag = flagSwitch.isOn
@@ -132,7 +132,8 @@ class AddEditReminderController: BaseAddController {
                 self.delegate?.didUpdated()
             }
         } else {
-            CoreDataManager.shared.createReminder(date: Date(), flag: flagSwitch.isOn, note: notesTextView.text ?? "", priority: Int16(selectedPriorty.priortyId), title: titleTextView.text, list: list)
+            CoreDataManager.shared.createReminder(date: Date(), flag: flagSwitch.isOn, note: notesTextView.text ?? "",
+                                                  priority: Int16(selectedPriorty.priortyId), title: titleTextView.text, list: list)
         }
     }
 }
@@ -152,7 +153,7 @@ extension AddEditReminderController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "textFieldReuse", for: indexPath) as! TextViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: TextViewCell.reuseIdentifier, for: indexPath) as! TextViewCell
             if indexPath.row == 0 {
                 if titleTextView == nil {
                     cell.textView.becomeFirstResponder()

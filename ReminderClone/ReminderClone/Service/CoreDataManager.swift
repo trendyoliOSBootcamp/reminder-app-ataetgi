@@ -58,7 +58,7 @@ struct CoreDataManager {
             return lists
 
         } catch let fetchErr {
-            print("Failed to fetch companies", fetchErr)
+            debugPrint("Failed to fetch companies", fetchErr)
             return []
         }
     }
@@ -70,7 +70,7 @@ struct CoreDataManager {
                 try persistentContainer.viewContext.save()
                 completion?(nil)
             } catch {
-                print("An error occured while saving: \(error)")
+                debugPrint("An error occured while saving: \(error)")
                 completion?(error)
             }
         }

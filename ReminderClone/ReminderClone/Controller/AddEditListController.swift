@@ -4,7 +4,7 @@
 //
 //  Created by Ata Etgi on 14.05.2021.
 //
-import SwiftUI
+
 import UIKit
 
 class AddEditListController: BaseAddController {
@@ -47,27 +47,52 @@ class AddEditListController: BaseAddController {
         }
     }
     
-    @objc private func textChanged(sender: UITextField) {
-        navigationItem.rightBarButtonItem?.isEnabled = sender.hasText
-    }
-    
     enum Section {
         case color, icon
     }
 
+    private struct Item: Hashable {
+        var image: UIImage?
+        var color: UIColor?
+        var imageString: String?
+        
+        init(imageName: String) {
+            self.image = UIImage(systemName: imageName)
+            self.imageString = imageName
+        }
+        
+        init(color: UIColor) {
+            self.color = color
+        }
+        private let identifier = UUID()
+        static let colors = [
+            .systemRed, .systemOrange, .systemYellow, .systemGreen, .systemBlue,
+            .systemPurple, .systemTeal, .systemPink, .systemIndigo, .systemGray, .magenta, .brown
+        ].map { Item(color: $0) }
+        
+        static let all = [
+            "face.smiling","list.bullet", "trash", "folder", "paperplane", "book", "tag", "camera", "pin",
+            "lock.shield", "cube.box", "gift", "eyeglasses", "lightbulb"
+        ].map { Item(imageName: $0) }
+    }
+    
+    @objc private func textChanged(sender: UITextField) {
+        navigationItem.rightBarButtonItem?.isEnabled = sender.hasText
+    }
+    
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     private var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     var collectionView: UICollectionView!
     
     var selectedColor: UIColor = .systemBlue {
-        didSet{
+        didSet {
             imageView.backgroundColor = selectedColor
             imageView.layer.shadowColor = selectedColor.cgColor
             textField.textColor = selectedColor
         }
     }
     var selectedIcon: String = "list.bullet" {
-        didSet{
+        didSet {
             imageView.image = UIImage(selectedIcon, at: 50, centeredIn: .init(width: 100, height: 100))
         }
     }
@@ -83,6 +108,7 @@ class AddEditListController: BaseAddController {
         super.viewWillAppear(animated)
         navigationItem.rightBarButtonItem?.isEnabled = list != nil
         selectColorFromCollectionView()
+        selectIconFromCollectionView()
     }
     
     @objc override func doneTapped() {
@@ -99,14 +125,21 @@ class AddEditListController: BaseAddController {
         super.doneTapped()
     }
     
-    fileprivate func selectColorFromCollectionView() {
+    private func selectColorFromCollectionView() {
         if let selectedItem = snapshot.itemIdentifiers(inSection: .color).first(where: { $0.color == selectedColor }) {
             let index: Int = Item.colors.distance(from: Item.colors.startIndex, to: Item.colors.firstIndex(of: selectedItem) ?? 4)
             collectionView.selectItem(at: [0, index], animated: true, scrollPosition: .bottom)
         }
     }
     
-    func createLayout() -> UICollectionViewLayout {
+    private func selectIconFromCollectionView() {
+        if let selectedItem = snapshot.itemIdentifiers(inSection: .icon).first(where: { $0.imageString == selectedIcon }) {
+            let index: Int = Item.all.distance(from: Item.all.startIndex, to: Item.all.firstIndex(of: selectedItem) ?? 1)
+            collectionView.selectItem(at: [1, index], animated: true, scrollPosition: .bottom)
+        }
+    }
+    
+    private func createLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(60),
                                              heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -123,29 +156,7 @@ class AddEditListController: BaseAddController {
         return layout
     }
     
-    private struct Item: Hashable {
-        var image: UIImage?
-        var color: UIColor?
-        var imageString: String?
-        
-        init(imageName: String) {
-            self.image = UIImage(systemName: imageName)
-            self.imageString = imageName
-        }
-        
-        init(color: UIColor) {
-            self.color = color
-        }
-        private let identifier = UUID()
-        static let colors = [.systemRed, .systemOrange, .systemYellow, .systemGreen, .systemBlue, .systemPurple, .systemTeal, .systemPink, .systemIndigo, .systemGray, .magenta, .brown].map { Item(color: $0) }
-        
-        static let all = [
-            "face.smiling", "trash", "folder", "paperplane", "book", "tag", "camera", "pin",
-            "lock.shield", "cube.box", "gift", "eyeglasses", "lightbulb"
-        ].map { Item(imageName: $0) }
-    }
-    
-    func configureDataSource() {
+    private func configureDataSource() {
         let cellRegistration = UICollectionView.CellRegistration<CustomConfigurationCell, Item> { (cell, indexPath, item) in
             cell.listColor = item.color
             cell.image = item.image
@@ -155,7 +166,6 @@ class AddEditListController: BaseAddController {
             (collectionView: UICollectionView, indexPath: IndexPath, item: Item) -> UICollectionViewCell? in
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: item)
         }
-
        
         snapshot.appendSections([.color, .icon])
         snapshot.appendItems(Item.colors, toSection: .color)
@@ -169,14 +179,18 @@ class AddEditListController: BaseAddController {
         collectionView.delegate = self
         view.addSubview(imageView)
         imageView.centerXInSuperview()
-        imageView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: nil, bottom: nil, trailing: nil, padding: .init(top: 20, left: 0, bottom: 0, right: 0), size: .init(width: 100, height: 100))
+        imageView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: nil, bottom: nil, trailing: nil,
+                         padding: .init(top: 20, left: 0, bottom: 0, right: 0), size: .init(width: 100, height: 100))
         
         view.addSubview(textField)
         textField.becomeFirstResponder()
-        textField.anchor(top: imageView.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor, padding: .init(top: 20, left: 20, bottom: 0, right: 20))
+        textField.anchor(top: imageView.bottomAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor,
+                         padding: .init(top: 20, left: 20, bottom: 0, right: 20))
         
         view.addSubview(collectionView)
-        collectionView.anchor(top: textField.bottomAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor, padding: .init(top: 20, left: 0, bottom: 0, right: 0))
+        collectionView.anchor(top: textField.bottomAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor,
+                              padding: .init(top: 20, left: 0, bottom: 0, right: 0))
+        collectionView.allowsMultipleSelection = true
     }
 }
 
@@ -193,20 +207,11 @@ extension AddEditListController: UICollectionViewDelegate {
             selectedIcon = imageString
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        collectionView.indexPathsForSelectedItems?.filter({ $0.section == indexPath.section })
+            .forEach({ collectionView.deselectItem(at: $0, animated: false) })
+        return true
+    }
 }
 
-struct preview: PreviewProvider {
-    static var previews: some View {
-        ContainerView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainerView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> some UIViewController {
-//            AddListController()
-            UINavigationController(rootViewController: AddEditListController())
-        }
-        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-            
-        }
-    }
-}

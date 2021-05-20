@@ -9,48 +9,44 @@ import UIKit
 import CoreData
 
 class FlagController: UITableViewController {
-    let cellId = "cellId"
-
-    lazy var fetchedResultsController: NSFetchedResultsController<Reminder> = {
+    
+    private lazy var fetchedResultsController: NSFetchedResultsController<Reminder> = {
         let context = CoreDataManager.shared.persistentContainer.viewContext
         let request = Reminder.createFetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
         request.predicate = NSPredicate(format: "flag == '1'")
-        let frc = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        let frc = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context,
+                                             sectionNameKeyPath: nil, cacheName: nil)
         frc.delegate = self
         do {
             try frc.performFetch()
         } catch {
-            print(error)
+            debugPrint(error)
         }
         return frc
     }()
     
-    lazy var noReminderLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .gray
-        label.textAlignment = .center
-        label.text = "No Reminders"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.backgroundView = noReminderLabel
-        tableView.backgroundColor = .systemGroupedBackground
-        tableView.allowsSelection = false
-        tableView.showsVerticalScrollIndicator = false
-        tableView.layoutMargins = .zero
-        tableView.separatorInset = .init(top: 0, left: 44, bottom: 0, right: 0)
-        tableView.register(ReminderCell.self, forCellReuseIdentifier: cellId)
+        setupTableView()
         title = "Flagged"
         navigationItem.largeTitleDisplayMode = .always
         let apperance = UINavigationBarAppearance()
         apperance.largeTitleTextAttributes = [.foregroundColor: UIColor.systemOrange]
         navigationController?.navigationBar.standardAppearance = apperance
     }
+    
+    private func setupTableView() {
+        tableView.backgroundColor = .systemGroupedBackground
+        tableView.allowsSelection = false
+        tableView.showsVerticalScrollIndicator = false
+        tableView.layoutMargins = .zero
+        tableView.separatorInset = .init(top: 0, left: 44, bottom: 0, right: 0)
+        tableView.register(ReminderCell.self, forCellReuseIdentifier: ReminderCell.reuseIdentifier)
+    }
 }
+
+// MARK: - TableView Methods
 
 extension FlagController {
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -58,11 +54,16 @@ extension FlagController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if fetchedResultsController.fetchedObjects?.count == 0 {
+            tableView.setEmptyMessage("No Reminders")
+        } else {
+            tableView.restore()
+        }
         return fetchedResultsController.fetchedObjects?.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ReminderCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ReminderCell.reuseIdentifier, for: indexPath) as! ReminderCell
         let reminder = fetchedResultsController.object(at: indexPath)
         cell.reminder = reminder
         cell.textView.isEditable = false
@@ -88,10 +89,6 @@ extension FlagController {
 
 extension FlagController: NSFetchedResultsControllerDelegate {
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        if snapshot.itemIdentifiers.count > 0 {
-            noReminderLabel.alpha = 0
-        } else {
-            noReminderLabel.alpha = 1
-        }
+
     }
 }

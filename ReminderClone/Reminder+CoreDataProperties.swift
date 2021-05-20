@@ -9,7 +9,6 @@
 import Foundation
 import CoreData
 
-
 extension Reminder {
 
     @nonobjc public class func createFetchRequest() -> NSFetchRequest<Reminder> {
@@ -25,6 +24,6 @@ extension Reminder {
     @NSManaged public var list: List
 }
 
-extension Reminder : Identifiable {
+extension Reminder: Identifiable {
 
 }

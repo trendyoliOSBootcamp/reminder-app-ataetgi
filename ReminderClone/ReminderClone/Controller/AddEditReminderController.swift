@@ -87,7 +87,7 @@ class AddEditReminderController: BaseAddController {
     var selectedList: PickerItem? {
         didSet{
             if tableView != nil {
-                tableView.reloadData()
+                tableView.reloadSections(IndexSet(integer: 1), with: .none)
             }
         }
     }

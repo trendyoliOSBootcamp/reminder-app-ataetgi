@@ -64,8 +64,8 @@ extension FlagController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ReminderCell.reuseIdentifier, for: indexPath) as! ReminderCell
-        let reminder = fetchedResultsController.object(at: indexPath)
-        cell.reminder = reminder
+        let reminder = fetchedResultsController.sections?[indexPath.section].objects?[indexPath.row]
+        cell.reminder = reminder as? Reminder
         cell.textView.isEditable = false
         cell.textView.isSelectable = false
         cell.layoutMargins = .zero

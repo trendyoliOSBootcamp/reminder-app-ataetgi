@@ -8,6 +8,33 @@
 import UIKit
 import CoreData
 
+enum PickerType {
+    case priorty, list
+}
+
+struct PickerItem {
+    let name: String
+    let objectId: NSManagedObjectID?
+    let type: PickerType
+    
+    var priortyId: Int {
+        switch name {
+        case "Low": return 1
+        case "Medium": return 2
+        case "High": return 3
+        default: return 0
+        }
+    }
+    static func getName(id: Int) -> String {
+        switch id {
+        case 1: return "Low"
+        case 2: return "Medium"
+        case 3: return "High"
+        default: return "None"
+        }
+    }
+}
+
 class PickerViewPresenter: UITextField, UIPickerViewDataSource, UIPickerViewDelegate {
     private lazy var doneToolbar: UIToolbar = {
         let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
@@ -74,33 +101,6 @@ class PickerViewPresenter: UITextField, UIPickerViewDataSource, UIPickerViewDele
 
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         selectedItem = items?[row]
-    }
-}
-
-enum PickerType {
-    case priorty, list
-}
-struct PickerItem {
-
-    let name: String
-    let objectId: NSManagedObjectID?
-    let type: PickerType
-    
-    var priortyId: Int {
-        switch name {
-        case "Low": return 1
-        case "Medium": return 2
-        case "High": return 3
-        default: return 0
-        }
-    }
-    static func getName(id: Int) -> String {
-        switch id {
-        case 1: return "Low"
-        case 2: return "Medium"
-        case 3: return "High"
-        default: return "None"
-        }
     }
 }
 

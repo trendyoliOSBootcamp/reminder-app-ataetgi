@@ -11,7 +11,6 @@ protocol SwitchDelegate: AnyObject {
     func didEndTap(_ customSwitch: CustomSwitch)
 }
 
-
 class CustomSwitch: UIButton {
     var status: Bool = false {
         didSet {

@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             CoreDataManager.shared.createList(color: .systemBlue, icon: "list.bullet", name: "Reminders", date: Date())
             UserDefaults.standard.setValue(true, forKey: isLaunchedKey)
         }
+        
         return true
     }
 

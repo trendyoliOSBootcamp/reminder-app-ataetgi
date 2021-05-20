@@ -28,7 +28,8 @@ struct CoreDataManager {
         list.icon = icon
         list.name = name
         list.date = date
-        saveContext() { _ in
+        saveContext() { error in
+            guard error == nil else { return }
             NotificationCenter.default.post(name: .updateList, object: nil)
         }
     }
@@ -42,16 +43,14 @@ struct CoreDataManager {
         reminder.priority = priority
         reminder.title = title
         reminder.list = list
-        saveContext() { _ in
+        saveContext() { error in
+            guard error == nil else { return }
             NotificationCenter.default.post(name: .updateReminder, object: nil)
         }
     }
     
     func fetchLists() -> [List] {
-        
-        // attempt my core data fetch somehow...
         let context  = persistentContainer.viewContext
-        
         let fetchRequest = List.createFetchRequest()
         
         do {
@@ -62,7 +61,6 @@ struct CoreDataManager {
             print("Failed to fetch companies", fetchErr)
             return []
         }
-        
     }
     
     typealias SaveResult = (Error?) -> ()

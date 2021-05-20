@@ -7,7 +7,6 @@
 
 import UIKit
 import CoreData
-import SwiftUI
 
 class HomeController: UIViewController {
     
@@ -40,27 +39,16 @@ class HomeController: UIViewController {
     
     var reminderRequest: NSFetchRequest<Reminder>!
     var fetchedReminderResultsController: NSFetchedResultsController<Reminder>!
-    
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isToolbarHidden = false
+        setupSearchController()
         setupToolbar()
         configureCollectionView()
         configureDataSource()
         coreDataRequest()
-        
-        let resultsController = ResultsController()
-        searchController = UISearchController(searchResultsController: resultsController)
-        searchController.delegate = self
-        searchController.searchResultsUpdater = self
-        searchController.searchBar.autocapitalizationType = .none
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.delegate = self
-        
-        navigationItem.searchController = searchController
-        
-        definesPresentationContext = true
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .updateList, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateSnapshot(animated:)), name: .updateReminder, object: nil)
 
@@ -68,13 +56,25 @@ class HomeController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.largeTitleDisplayMode = .never
         navigationController?.toolbar.isHidden = false
     }
     
     lazy var addReminderButton = UIBarButtonItem(customView: createReminderButton(selector: #selector(addReminder)))
     
-    fileprivate func setupToolbar() {
+    private func setupSearchController() {
+        let resultsController = ResultsController()
+        searchController = UISearchController(searchResultsController: resultsController)
+        searchController.delegate = self
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.delegate = self
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+    }
+    
+    private func setupToolbar() {
         let toolBar = navigationController?.toolbar
         let toolbarApperance = UIToolbarAppearance()
         toolbarApperance.backgroundColor = .systemGroupedBackground
@@ -101,8 +101,8 @@ class HomeController: UIViewController {
 
     
     func configureCollectionView() {
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        collectionView = UICollectionView(frame: view.frame, collectionViewLayout: createLayout())
+        collectionView.autoresizingMask = [.flexibleHeight, .flexibleHeight]
         collectionView.backgroundColor = .systemGroupedBackground
         collectionView.delegate = self
         view.addSubview(collectionView)
@@ -247,7 +247,7 @@ class HomeController: UIViewController {
         do {
             try fetchedListResultsController.performFetch()
             try fetchedReminderResultsController.performFetch()
-            updateSnapshot(animated: true)
+            updateSnapshot(animated: false)
         } catch {
             print(error)
         }
@@ -268,7 +268,6 @@ class HomeController: UIViewController {
         let sections = Section.allCases
         diffableDataSourceSnapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
         diffableDataSourceSnapshot.appendSections(sections)
-        
         diffableDataSourceSnapshot.appendItems(headers, toSection: .header)
         diffableDataSourceSnapshot.appendItems(fetchedListResultsController.fetchedObjects ?? [], toSection: .list)
         dataSource.apply(diffableDataSourceSnapshot, animatingDifferences: animated)
@@ -297,9 +296,8 @@ extension HomeController: UICollectionViewDelegate {
 extension HomeController: NSFetchedResultsControllerDelegate {
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
-
+        
     }
-    
 }
 
 extension HomeController: UISearchControllerDelegate, UISearchBarDelegate  {
@@ -308,21 +306,5 @@ extension HomeController: UISearchControllerDelegate, UISearchBarDelegate  {
     }
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         updateSearchResults(for: searchController)
-    }
-}
-
-
-struct PreviewHome: PreviewProvider {
-    static var previews: some View {
-        ContainerView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainerView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> some UIViewController {
-            UINavigationController(rootViewController: HomeController())
-        }
-        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-            
-        }
     }
 }

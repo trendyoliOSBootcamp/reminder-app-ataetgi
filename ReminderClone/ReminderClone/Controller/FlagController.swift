@@ -26,8 +26,18 @@ class FlagController: UITableViewController {
         return frc
     }()
     
+    lazy var noReminderLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.text = "No Reminders"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.backgroundView = noReminderLabel
         tableView.backgroundColor = .systemGroupedBackground
         tableView.allowsSelection = false
         tableView.showsVerticalScrollIndicator = false
@@ -35,7 +45,7 @@ class FlagController: UITableViewController {
         tableView.separatorInset = .init(top: 0, left: 44, bottom: 0, right: 0)
         tableView.register(ReminderCell.self, forCellReuseIdentifier: cellId)
         title = "Flagged"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
         let apperance = UINavigationBarAppearance()
         apperance.largeTitleTextAttributes = [.foregroundColor: UIColor.systemOrange]
         navigationController?.navigationBar.standardAppearance = apperance
@@ -77,5 +87,11 @@ extension FlagController {
 
 
 extension FlagController: NSFetchedResultsControllerDelegate {
-    
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        if snapshot.itemIdentifiers.count > 0 {
+            noReminderLabel.alpha = 0
+        } else {
+            noReminderLabel.alpha = 1
+        }
+    }
 }

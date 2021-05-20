@@ -9,7 +9,6 @@ import UIKit
 
 class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
     
-    
     let textView: UITextView = {
         let tv = UITextView()
         tv.textContainerInset = .init(top: 10, left: 2, bottom: 10, right: 2)
@@ -25,13 +24,6 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
         sw.delegate = self
         return sw
     }()
-    
-//    let seperator: UIView = {
-//        let view = UIView()
-//        view.backgroundColor = .quaternaryLabel
-//        view.constrainHeight(constant: 1)
-//        return view
-//    }()
     
     let priortyLabel: UILabel = {
         let lbl = UILabel()
@@ -52,9 +44,11 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
         didSet {
             guard let reminder = reminder else { return }
             priortyLabel.text = String(repeating: "!", count: Int(reminder.priority) )
-            isDoneSwitch.tintColor = reminder.list.color
-            isDoneSwitch.setStatus(reminder.done )
+            isDoneSwitch.tintColor = reminder.done ? .gray : reminder.list.color
+            isDoneSwitch.setStatus(reminder.done)
             textView.text = reminder.title
+            textView.textColor = reminder.done ? .gray : .label
+            flagImageView.tintColor = reminder.done ? .gray : .systemOrange
             flagImageView.alpha = (reminder.flag) ? 1 : 0
         }
     }
@@ -96,6 +90,9 @@ class ReminderCell: UITableViewCell, UITextViewDelegate, SwitchDelegate {
     }
     
     func didEndTap(_ customSwitch: CustomSwitch) {
+        textView.textColor = customSwitch.status ? .gray : .label
+        flagImageView.tintColor = customSwitch.status ? .gray : .systemOrange
+        isDoneSwitch.tintColor = customSwitch.status ? .gray : reminder?.list.color
         reminder?.done = customSwitch.status
         CoreDataManager.shared.saveContext(completion: nil)
     }

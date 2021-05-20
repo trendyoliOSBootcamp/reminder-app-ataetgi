@@ -6,14 +6,13 @@
 //
 
 import UIKit
-protocol TextViewCellProtocol: AnyObject {
+protocol TextViewCellDelegate: AnyObject {
     func titleHasChange(isHidden: Bool)
 }
 
-
 class TextViewCell: UITableViewCell, UITextViewDelegate {
     
-    weak var delegate: TextViewCellProtocol?
+    weak var delegate: TextViewCellDelegate?
     
     let textView: UITextView = {
         let tv = UITextView()

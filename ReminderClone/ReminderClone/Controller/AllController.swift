@@ -12,6 +12,7 @@ import SwiftUI
 class AllController: UITableViewController {
 
     let cellId = "cellId"
+    lazy var addReminderButton = createReminderButton(selector: #selector(addReminder))
     
     lazy var fetchedResultsController: NSFetchedResultsController<Reminder> = {
         let context = CoreDataManager.shared.persistentContainer.viewContext
@@ -27,25 +28,55 @@ class AllController: UITableViewController {
         return frc
     }()
     
+    lazy var noReminderLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .gray
+        label.textAlignment = .center
+        label.text = "No Reminders"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        tableView = UITableView(frame: tableView.frame, style: .grouped)
+        tableView.backgroundView = noReminderLabel
         tableView.backgroundColor = .systemGroupedBackground
         tableView.allowsSelection = false
         tableView.showsVerticalScrollIndicator = false
+        tableView.tableFooterView = UIView()
+        let tview = UIView()
+        tview.backgroundColor = .blue
         tableView.register(ReminderCell.self, forCellReuseIdentifier: cellId)
         tableView.layoutMargins = .zero
         tableView.separatorInset = .init(top: 0, left: 44, bottom: 0, right: 0)
         title = "All"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
         let apperance = UINavigationBarAppearance()
         apperance.largeTitleTextAttributes = [.foregroundColor: UIColor.darkGray]
         navigationController?.navigationBar.standardAppearance = apperance
+        
+        setupToolbar()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.toolbar.isHidden = true
+        navigationController?.toolbar.isHidden = false
+    }
+    
+    fileprivate func setupToolbar() {
+        addReminderButton.tintColor = .darkGray
+        let toolBar = navigationController?.toolbar
+        let toolbarApperance = UIToolbarAppearance()
+        toolbarApperance.backgroundColor = .systemGroupedBackground
+        toolbarApperance.shadowColor = .clear
+        toolBar?.standardAppearance = toolbarApperance
+        toolbarItems = [UIBarButtonItem(customView: addReminderButton), .flexibleSpace()]
+    }
+    
+    @objc func addReminder() {
+        print(#function)
+        let addReminderController = AddEditReminderController()
+        present(UINavigationController(rootViewController: addReminderController), animated: true, completion: nil)
     }
 }
 
@@ -56,13 +87,15 @@ extension AllController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return fetchedResultsController.sections![section].numberOfObjects
+        return fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ReminderCell
         let reminder = fetchedResultsController.object(at: indexPath)
         cell.reminder = reminder
+        cell.textView.isSelectable = false
+        cell.textView.isEditable = false
         cell.layoutMargins = .zero
         return cell
     }
@@ -73,7 +106,7 @@ extension AllController {
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerView = view as? UITableViewHeaderFooterView {
-            let list = (fetchedResultsController.sections![section].objects!.first as! Reminder).list
+            guard let list = (fetchedResultsController.sections?[section].objects?.first as? Reminder)?.list else { return }
             var content = UIListContentConfiguration.plainHeader()
             content.text = list.name
             content.textProperties.color = list.color
@@ -95,7 +128,7 @@ extension AllController {
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let v = UIView(frame: CGRect(x: 0, y:0, width: tableView.frame.width, height: 2))
-        v.backgroundColor = .secondarySystemBackground
+        v.backgroundColor = tableView.separatorColor
         return v
     }
 
@@ -105,8 +138,12 @@ extension AllController {
 }
 
 extension AllController: NSFetchedResultsControllerDelegate {
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange sectionInfo: NSFetchedResultsSectionInfo, atSectionIndex sectionIndex: Int, for type: NSFetchedResultsChangeType) {
-        
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        if snapshot.itemIdentifiers.count > 0 {
+            noReminderLabel.alpha = 0
+        } else {
+            noReminderLabel.alpha = 1
+        }
     }
 }
 

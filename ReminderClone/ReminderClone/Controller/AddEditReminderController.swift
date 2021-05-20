@@ -6,10 +6,9 @@
 //
 
 import UIKit
-import SwiftUI
 import CoreData
 
-protocol AddEditReminderProtocol: AnyObject {
+protocol AddEditReminderDelegate: AnyObject {
     func didUpdated()
 }
 
@@ -23,7 +22,7 @@ class AddEditReminderController: BaseAddController {
         }
     }
     
-    weak var delegate: AddEditReminderProtocol?
+    weak var delegate: AddEditReminderDelegate?
     
     private let flagSwitch: UISwitch = {
         let flag = UISwitch()
@@ -70,14 +69,12 @@ class AddEditReminderController: BaseAddController {
     var selectedPriorty: PickerItem = .init(name: "None", objectId: nil , type: .priorty) {
         didSet{
             if tableView != nil {
-                tableView.reloadData()
+                tableView.reloadSections(IndexSet(integer: 3), with: .none)
             }
         }
     }
     
-    var lists: [PickerItem] =  CoreDataManager.shared.fetchLists().map({ list in
-        return PickerItem(name: list.name, objectId: list.objectID, type: .list)
-    }) {
+    var lists: [PickerItem] = [PickerItem]() {
         didSet{
             if let reminder = reminder{
                 selectedList = PickerItem(name: reminder.list.name, objectId: reminder.list.objectID, type: .list)
@@ -99,7 +96,7 @@ class AddEditReminderController: BaseAddController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        lists = CoreDataManager.shared.fetchLists().map { list in
+        lists = CoreDataManager.shared.fetchLists().reversed().map { list in
             return PickerItem(name: list.name, objectId: list.objectID, type: .list)
         }
         
@@ -108,10 +105,6 @@ class AddEditReminderController: BaseAddController {
         navigationItem.rightBarButtonItem?.title = "Add"
         view.addSubview(priorityPickerViewPresenter)
         view.addSubview(listPickerViewPresenter)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
     
     fileprivate func setupTableView() {
@@ -142,8 +135,6 @@ class AddEditReminderController: BaseAddController {
             CoreDataManager.shared.createReminder(date: Date(), flag: flagSwitch.isOn, note: notesTextView.text ?? "", priority: Int16(selectedPriorty.priortyId), title: titleTextView.text, list: list)
         }
     }
-    
-    let flagIdentifier = "flagIdentfier"
 }
 
 extension AddEditReminderController: UITableViewDataSource {
@@ -160,7 +151,6 @@ extension AddEditReminderController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "textFieldReuse", for: indexPath) as! TextViewCell
             if indexPath.row == 0 {
@@ -185,7 +175,7 @@ extension AddEditReminderController: UITableViewDataSource {
             cell.textLabel?.text = "List"
             return cell
         } else if indexPath.section == 2 {
-            let cell = UITableViewCell(style: .default, reuseIdentifier: flagIdentifier)
+            let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
             cell.selectionStyle = .none
             cell.imageView?.image = UIImage(systemName: "flag.fill")
             cell.imageView?.tintColor = .white
@@ -212,7 +202,7 @@ extension AddEditReminderController: UITableViewDataSource {
     
 }
 
-extension AddEditReminderController: UITableViewDelegate, TextViewCellProtocol {
+extension AddEditReminderController: UITableViewDelegate, TextViewCellDelegate {
     
     func titleHasChange(isHidden: Bool) {
         navigationItem.rightBarButtonItem?.isEnabled = isHidden
@@ -241,22 +231,5 @@ extension AddEditReminderController: UITableViewDelegate, TextViewCellProtocol {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         view.endEditing(true)
-    }
-    
-}
-
-
-struct AddReminderPreview: PreviewProvider {
-    static var previews: some View {
-        ContainerView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainerView: UIViewControllerRepresentable {
-        func makeUIViewController(context: Context) -> some UIViewController {
-            AddEditReminderController()
-        }
-        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-            
-        }
     }
 }

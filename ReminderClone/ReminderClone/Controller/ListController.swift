@@ -8,13 +8,12 @@
 import UIKit
 import SwiftUI
 
-class ListController: UITableViewController, AddEditReminderProtocol {
+class ListController: UITableViewController, AddEditReminderDelegate {
     
     func didUpdated() {
         tableView.reloadData()
     }
     
-
     init(list: List?) {
         self.list = list
         super.init(style: .plain)
@@ -53,7 +52,7 @@ class ListController: UITableViewController, AddEditReminderProtocol {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.largeTitleDisplayMode = .always
         title = list?.name ?? "All"
         addReminderButton.tintColor = list?.color ?? .systemBlue
         let apperance = UINavigationBarAppearance()
